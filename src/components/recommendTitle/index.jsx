@@ -11,13 +11,17 @@ class RecommendTitle extends React.Component {
     render() {
       const title = this.props.title
       const iconClass = this.props.iconClass
+      let ifShowMore = ''
+      if(this.props.noMore) {
+        ifShowMore = 'none'
+      }
         return (
             <div className="recommend-title-wrapper">
               <div className="recommend-title-wrapper-left">
                 <i className={iconClass ? iconClass : ''}></i>
                 <span className="recommend-title-wrapper-left-text">{title}</span>
               </div>
-              <div className="recommend-title-wrapper-right">
+              <div className="recommend-title-wrapper-right" style={{display: ifShowMore}}>
                 <span className="recommend-title-wrapper-right-text">更多</span>
                 <i></i>
               </div>

@@ -15,9 +15,8 @@ import SingerSimilar from '../containers/singerSimilar/index.jsx'
 import SingerIntro from '../containers/singerIntro/index.jsx'
 import LatestMusic from '../containers/latestMusic/index.jsx'
 import AlbumInfo from '../containers/albumInfo/index.jsx'
+import Rank from '../containers/rank/index.jsx'
 
-// 如果是大型项目，router部分就需要做更加复杂的配置
-// 参见 https://github.com/reactjs/react-router/tree/master/examples/huge-apps
 
 class RouterMap extends React.Component {
     render() {
@@ -49,6 +48,9 @@ class RouterMap extends React.Component {
 
                     //专辑详情的路由配置
                     <Route path='/albumInfo/:id' component={AlbumInfo}/>
+
+                    //排行榜的路由配置
+                    <Route path="/rank" component={Rank}/>
                 </Route>
             </Router>
         )

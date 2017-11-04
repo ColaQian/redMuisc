@@ -29,14 +29,14 @@ class App extends React.Component {
                     <SideBar sideItem={myMusic} sideTitle="我的音乐"/>
                 </div>
                 <div className="nm-main">
-                    {   this.state.initDone
+                    {   
+                        this.state.initDone
                         ? this.props.children
                         : "正在加载中"
                     }
                 </div>
                 <div className="nm-player">
                     <div className="mini-player">
-                        
                     </div>
                 </div>
             </div>
