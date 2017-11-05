@@ -8,7 +8,7 @@ import './style.styl'
 class Banners extends React.Component {
     constructor(props, context) {
         super(props, context)
-        this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+        //this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     }
     componentDidMount() {
       setTimeout(() =>{
@@ -25,10 +25,9 @@ class Banners extends React.Component {
         for(let i = 0 ; i < this.children.length ; i++ ){
           let child = this.children[i]
           addClass(child,"slider-item")
-          child.style.width = sliderWidth + "px"
-          width += sliderWidth
+          child.style.width = 600 + "px"
+          width += 600
         }
-        width += sliderWidth * 2
         this.refs.sliderGroup.style.width = width + "px"
       }
       /*_initDots() {
@@ -38,28 +37,24 @@ class Banners extends React.Component {
         this.slider = new BScroll(this.refs.slider,{
           scrollX: true,
           scrollY: false,
-          momentum: false,
-          snap:true,
-          snapLoop:true,
-          snapThreshold: 0.3,
-          snapSpeed: 400
+          momentum: true,
+          loop: true
         })
+        
         this.slider.on("scrollEnd", () =>{
-          let currentIndex = this.slider.getCurrentPage().pageX
-          currentIndex -= 1
-          this.currentPageIndex = currentIndex
           if(this.timer) {
             clearTimeout(this.timer)
+          }
+          if(this.slider.x === -3600) {
+            this.slider.scrollTo(0,0,0)
           }
           this._play()
         })
       }
       _play() {
-        let pageIndex = this.currentPageIndex + 1
-        pageIndex += 1
         this.timer = setTimeout(() =>{
-          this.slider.goToPage(pageIndex,0,400)
-        },3000);
+          this.slider.scrollBy(-600,0,400)
+        },2000)
       }
     render() {
         const banners = this.props.banners
@@ -78,6 +73,21 @@ class Banners extends React.Component {
                             <span className="item-meta-text">{item.typeTitle}</span>
                           </div>
                         </div>)
+                    })
+                  }
+                  {
+                    banners.map((item,index) =>{
+                      if(index < 2){
+                         return (
+                          <div key={index}>
+                            <a>
+                              <img src={item.imgUrl}/>
+                            </a>
+                            <div className="item-meta">
+                              <span className="item-meta-text">{item.typeTitle}</span>
+                            </div>
+                          </div>)
+                      }   
                     })
                   }
                 </div>

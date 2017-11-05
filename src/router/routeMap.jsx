@@ -16,6 +16,7 @@ import SingerIntro from '../containers/singerIntro/index.jsx'
 import LatestMusic from '../containers/latestMusic/index.jsx'
 import AlbumInfo from '../containers/albumInfo/index.jsx'
 import Rank from '../containers/rank/index.jsx'
+import RankDetail from '../containers/rankDetail/index.jsx'
 
 
 class RouterMap extends React.Component {
@@ -50,7 +51,10 @@ class RouterMap extends React.Component {
                     <Route path='/albumInfo/:id' component={AlbumInfo}/>
 
                     //排行榜的路由配置
-                    <Route path="/rank" component={Rank}/>
+                    <Route path='/rank' component={Rank}/>
+
+                    //排行榜详情的路由配置
+                    <Route path='rankDetail/:id' component={RankDetail}/>
                 </Route>
             </Router>
         )

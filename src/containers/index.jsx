@@ -25,6 +25,9 @@ class App extends React.Component {
         return (
             <div className="nm-music">
                 <div className="nm-sidebar">
+                    <div className="nm-sidebar-back-wrapper">
+                        <span className="nm-sidebar-back">back</span>
+                    </div>
                     <SideBar sideItem={sideItem} sideTitle="发现"/>
                     <SideBar sideItem={myMusic} sideTitle="我的音乐"/>
                 </div>

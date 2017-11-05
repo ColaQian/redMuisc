@@ -2,7 +2,8 @@
   position: relative
   width: 250px
   height: 200px
-  border-radius: 10px
+  border-radius: 12px
+  box-shadow: 1px 3px 10px #888888
   overflow: hidden
   .rank-item-top
     position: absolute
@@ -17,6 +18,22 @@
       background: linear-gradient(to top,#fa90ba,#f7629e,#f5317f)
     &.top-hot-songs
       background: linear-gradient(to top,#f79992,#f46e65,#f04134)
+    &.top-denon-songs
+      background: linear-gradient(to top,#948aec,#7265e6,#6252cd)
+    &.top-billboard-songs
+      background: linear-gradient(to top,#7EF3C4,#49EEAB,#10E991)
+    &.top-uk-songs
+      background: linear-gradient(to top,#7EC7F3,#49B0EE,#1097E9) 
+    &.top-itune-songs
+      background: linear-gradient(to top,#7EF3F3,#49EEEE,#10E8E9)
+    &.top-oricon-songs
+      background: linear-gradient(to top,#C17EF3,#A749EE,#8B10E9)
+    &.top-hito-songs
+      background: linear-gradient(to top,#E87EF3,#DE49EE,#D410E9)
+    &.top-melon-songs
+      background: linear-gradient(to top,#F37ECA,#EE49B4,#E9109D)
+    &.top-gold-songs
+      background: linear-gradient(to top,#CDF37E,#B8EE49,#A2E910)
     &:hover
       transition: all 0.5s
       opacity: 0

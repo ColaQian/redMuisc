@@ -17,7 +17,7 @@ class InformationShow extends React.Component {
               <div className="info-show">
                 <h1 className="info-show-title">{info.name}</h1>
                 <div className="info-show-creator">
-                  <span style={{background:'url('+ picUrl +')'}} className="info-show-creator-avatar"></span>
+                  <span style={{backgroundImage:'url('+ picUrl +')'}} className="info-show-creator-avatar"></span>
                   <span className="info-show-creator-name">{info.creatorName}</span>
                   <span className="info-show-creator-time">{info.createTime} 创建</span>
                 </div>

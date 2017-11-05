@@ -7,8 +7,12 @@ import {
 import {
   singerInfo
 } from './singerInfo.js'
+import {
+  rankInfo
+} from './rankInfo.js'
 
 export default combineReducers({
   setPlayer,
-  singerInfo
+  singerInfo,
+  rankInfo
 })
