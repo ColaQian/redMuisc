@@ -48,25 +48,29 @@ class AlbumInfo extends React.Component {
           let songs = []
           //获取专辑的基本信息(封面，歌手，名称，介绍，发行时间等)
           albumInfo = createAlbum(res.album)
-          
+          this.setState({
+            albumInfo: albumInfo,
+            initDone: true
+          })
           //获取专辑内的歌曲
           res.songs.forEach((item) =>{
-            getSongUrl(item.id).then((res) =>{
+            //tip: 因为现在只需要获取到歌曲的基本信息,获取的歌曲的播放URL需要重新请求数据,而setState(albumSongs)可能在完全获取到
+            //     歌曲的播放URL就已经设置完毕，这样会导致页面上会显不出来歌曲的信息，因为此时state里的albumSongs为空
+            //     可以考虑在点击歌曲让其播放的时候再去获取播放URL
+            /*getSongUrl(item.id).then((res) =>{
               if(res.code === 200) {
                 console.log("歌曲的URL已经取到")
                 songs.push({...createSong(item),url: res.data[0].url})
               }
-            })
+            })*/
+            songs.push(createSong(item))
           })
           
           //将获取的专辑基本信息，歌曲放在状态里
           setTimeout(() =>{
             this.setState({
-              albumInfo: albumInfo,
-              albumSongs: songs,
-              initDone: true
+              albumSongs: songs
             })
-            console.log(this.state.albumSongs)
           },500)
         }
       })
@@ -104,13 +108,13 @@ class AlbumInfo extends React.Component {
                 </div>
               </div>
               <div className="album-info-playall">
-                <span className="album-info-playall-btn">播放全部({albumSongs.length})</span>
+                <span className="album-info-playall-btn">播放全部({this.state.albumSongs.length})</span>
               </div>
               <div className="album-info-content-wrapper" ref={(albumContent) =>{this.albumContent=albumContent}}>
                 <div className="album-info-content">
                   {
                     this.state.initDone 
-                    ? albumSongs.map((item,index) =>{
+                    ? this.state.albumSongs.map((item,index) =>{
                           return <SongInfo key={index} song={item} num={index}/>
                         })
                     : <p>加载中...</p>

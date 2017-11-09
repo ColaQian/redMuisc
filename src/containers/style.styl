@@ -47,8 +47,75 @@
     left: 0
     .normal-player
       width: 100%
-      height: 550px
     .mini-player
+      position: relative
       width: 100%
       height: 50px
-  
+      display: flex
+      .mini-player-line
+        position: absolute
+        width: 100%
+        height: 1px
+        background: #e9e9e9
+        top: 1px
+      .mini-player-avatar-wrapper
+        flex: 0 0 50px
+        width: 50px
+        height: 48px
+        margin-top: 2px
+        position: relative
+        .mini-player-toggle
+          position: absolute
+          height: 50px
+          width: 50px
+          z-index: 2
+          background: rgba(90,90,90,0)
+          &:hover
+            background: rgba(90,90,90,0.4)
+        .mini-player-avatar
+          position: absolute
+          display: inline-block
+          height: 50px
+          width: 50px
+          z-index: 1
+      .mini-player-play-wrapper
+        position: relative
+        felx: 0 0 120px
+        height: 50px
+        width: 120px
+        margin: 0 30px
+        .mini-player-play-item
+          position: absolute
+          display: inline-block
+          background: #d73435
+          &.mini-player-play-presong
+            left: 0
+            top: 12px
+            height: 26px
+            width: 26px
+            border-radius: 50%
+          &.mini-player-play-toggle
+            height: 30px
+            width: 30px
+            border-radius: 50%
+            top: 10px
+            left: 45px
+          &.mini-player-play-next
+            height: 26px
+            width: 26px
+            border-radius: 50%
+            top: 12px
+            right: 0
+      .mini-player-songinfo-progress
+        flex: 1
+        display: inline-block
+        height: 50px
+        .mini-player-songinfo
+          display: inline-block
+        .mini-player-progress
+          display: inline-block
+          width: 100%
+      .mini-player-funcs
+        flex: 1
+        display: inline-block
+        height: 50px

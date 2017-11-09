@@ -22,7 +22,7 @@ class RecommendTitle extends React.Component {
                 <span className="recommend-title-wrapper-left-text">{title}</span>
               </div>
               <div className="recommend-title-wrapper-right" style={{display: ifShowMore}}>
-                <span className="recommend-title-wrapper-right-text">更多</span>
+                <span className="recommend-title-wrapper-right-text">更多&nbsp;></span>
                 <i></i>
               </div>
             </div>

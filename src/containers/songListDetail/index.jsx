@@ -4,6 +4,7 @@ import BigTitle from '../../components/bigTitle/index.jsx'
 import AvatarInfo from '../../components/avatarInfo/index.jsx'
 import InformationShow from '../../components/informationShow/index.jsx'
 import SongInfo from '../../components/songInfo/index.jsx'
+import PlayAll from '../../components/playAll/index.jsx'
 import {initScroll} from '../../common/js/initBetterScroll.js'
 import {getPlayListDetail} from '../../api/getSongList.js'
 import {playListDetail} from '../../common/js/createPlaylist.js'
@@ -108,9 +109,10 @@ class SongListDetail extends React.Component {
                   }
                 </div>
               </div>
-              <div className="song-list-detail-playall">
+              {/*<div className="song-list-detail-playall">
                 <span className="song-list-detail-playall-btn">播放全部({this.state.songs.length})</span>
-              </div>
+              </div>*/}
+              <PlayAll count={this.state.songs.length}/>
               <div className="song-list-content-wrapper" ref={(songListContent) =>{this.songListContent=songListContent}}>
                 <div className="song-list-content">
                   {

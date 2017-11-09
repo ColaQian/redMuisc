@@ -7,6 +7,7 @@ import PlayList from './playList/index.jsx'
 import Album from './album/index.jsx'
 import SongInformation from './songInfo/index.jsx'
 import SingerSelf from './singerSelf/index.jsx'
+import {initScroll} from '../../common/js/initBetterScroll.js'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {mapState} from '../../store/reducers/mapState.js'
@@ -44,6 +45,12 @@ class Search extends React.Component {
     }
     componentDidMount() {
       this._initHotSongs()
+      this.searchResultSlider = initScroll(this.searchResult)
+    }
+    componentDidUpdate() {
+      if(this.searchResultSlider) {
+        this.searchResultSlider.refresh()
+      }
     }
     _initHotSongs() {
       getKeySong().then((res) =>{
@@ -56,9 +63,12 @@ class Search extends React.Component {
       })
     }
     hotKeyClick(key) {
-      this.setState({
+       this.setState({
         searchContent: key
       })
+      this.emptyState()
+      this._search(key,20,0,1)
+      this.props.saveSearchHistory(key)
     }
     //监听搜索框的内容变化，并将内容记录在state中
     inputChange(e) {
@@ -71,6 +81,7 @@ class Search extends React.Component {
       if(e.keyCode === 13) {
         debunce(this.props.saveSearchHistory(this.state.searchContent),800)
       }
+      this.emptyState()
       this._search(this.state.searchContent,20,0,1)
     }
     //开始搜索
@@ -147,7 +158,9 @@ class Search extends React.Component {
                   playListName: item.name,
                   playListCreatorId: item.creator.userId,
                   playListCreatorName: item.creator.nickname,
-                  playCount: item.playCount
+                  playCount: item.playCount,
+                  songsCount: item.trackCount,
+                  picUrl: item.coverImgUrl
                 })
               })
               playListCount = res.result.playlistCount
@@ -169,6 +182,8 @@ class Search extends React.Component {
       this.setState({
         searchContent: item
       })
+      this.emptyState()
+      this._search(item,20,0,1)
     }
     //点击搜索历史右上角的垃圾桶符号,清空搜索历史中的内容
     deleteAllSearchHis() {
@@ -233,6 +248,21 @@ class Search extends React.Component {
           return
       }
     }
+    emptyState() {
+      if(this.state.singerAlbums.length === this.state.singerSelf.length === this.state.playListCount.length === 0) {
+        return 
+      }
+      this.setState({
+        singerSongs: [],
+        songsCount: 0,
+        singerAlbums: [],
+        albumCount: 0,
+        singerSelf: [],
+        singerCount: 0,
+        playList: [],
+        playListCount: 0
+      })
+    }
     render() {
         return (
             <div className="search-wrapper">
@@ -296,8 +326,8 @@ class Search extends React.Component {
               </div>
               <div className="search-result-wrapper" style={{display: this.state.searchContent.length === 0 ? 'none' : ''}}>
                 <TitleColumn titles={['单曲','歌手','专辑','歌单']} columnClick={this.navClick.bind(this)}/>
-                <div className="search-result">
-                  <div className="search-result-scroll">
+                <div className="search-result" ref={(searchResult) =>{this.searchResult = searchResult}}>
+                  <div className="search-result-scroll" ref={(searchResultScroll) =>{this.searchResultScroll = searchResultScroll}}>
                     <div style={{
                                   display: this.state.currentResult === 'song' ? '' : 'none'
                                 }}>
@@ -318,7 +348,7 @@ class Search extends React.Component {
                         this.state.initDone
                         ?
                         this.state.singerSelf.map((item,index) =>{
-                          return <SingerSelf singer={item} key={index}/>
+                          return <SingerSelf singer={item} key={index} singerIndex={index}/>
                         })
                         :
                         <p>loading...singer</p>
@@ -344,7 +374,7 @@ class Search extends React.Component {
                         this.state.initDone
                         ?
                         this.state.playList.map((item,index) =>{
-                          return <PlayList playList={item} key={index}/>
+                          return <PlayList playList={item} key={index} playListIndex={index}/>
                         })
                         :
                         <p>loading...playList</p>

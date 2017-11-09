@@ -58,7 +58,7 @@ class SongList extends React.Component {
         }
       })
     }
-    handlePlaylst(meta) {
+    handlePlaylist(meta) {
       this._initSongList(meta)
       this.setState({
         cate: meta
@@ -72,21 +72,21 @@ class SongList extends React.Component {
       const songList = this.state.songList
         return (
             <div className="playlist-wrapper" ref={(playListScroll) =>{this.playListScroll = playListScroll}}>
-              <div className="playlist">
+              <div className="playlist-w">
                 <div className="playlist-meta">
                   <p className="playlist-meta-title">歌单分类</p>
                   <ul className="playlist-meta-content">
                     {
                       cate.map((item,index) =>{
-                        return <li key={index} className={this.state.cate === item ? "playlist-meta-content-item playlist-meta-content-item-selected" : "playlist-meta-content-item"} onClick={this.handlePlaylst.bind(this,item)}>{item}</li>
+                        return <li key={index} className={this.state.cate === item ? "playlist-meta-content-item playlist-meta-content-item-selected" : "playlist-meta-content-item"} onClick={this.handlePlaylist.bind(this,item)}>{item}</li>
                       })
                     }
                   </ul>
                 </div>
-                <div className="playlist-content-wrapper">
+                <div className="playlist-con-wrapper">
                   {
                     songList.map((item,index) =>{
-                      return <div key={index} className="playlist-content">
+                      return <div key={index} className="playlist-con">
                               <AvatarInfo avatarInfo={item} width="150" clickAvatar={this.getSongListInfo.bind(this,item.id)}/>
                               </div>
                     })
