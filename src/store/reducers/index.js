@@ -11,8 +11,13 @@ import {
   rankInfo
 } from './rankInfo.js'
 
+import {
+  searchHistory
+} from './history.js'
+
 export default combineReducers({
   setPlayer,
   singerInfo,
-  rankInfo
+  rankInfo,
+  searchHistory
 })

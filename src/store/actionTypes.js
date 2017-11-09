@@ -15,3 +15,8 @@ export const SET_SINGER_SIMILAR = 'SET_SINGER_SIMILAR'
 //排行榜的详细信息，简介，歌曲列表
 export const RANK_BASE_INFO = 'RANK_BASE_INFO'
 export const RANK_SONGS = 'RANK_SONGS'
+
+//搜索历史
+export const SAVE_HISTORY = 'SAVE_HISTORY'
+export const DELETE_HISTORY = 'DELETE_HISTORY'
+export const DELETE_ALL_HISTORY = 'DELETE_ALL_HISTORY'

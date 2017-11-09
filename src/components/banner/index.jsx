@@ -45,7 +45,7 @@ class Banners extends React.Component {
           if(this.timer) {
             clearTimeout(this.timer)
           }
-          if(this.slider.x === -3600) {
+          if(this.slider.x <= -3600) {
             this.slider.scrollTo(0,0,0)
           }
           this._play()
@@ -54,7 +54,7 @@ class Banners extends React.Component {
       _play() {
         this.timer = setTimeout(() =>{
           this.slider.scrollBy(-600,0,400)
-        },2000)
+        },3000)
       }
     render() {
         const banners = this.props.banners
