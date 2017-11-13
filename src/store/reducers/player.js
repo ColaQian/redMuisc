@@ -1,8 +1,14 @@
 import * as types from '../actionTypes.js'
 import {
-  insertSong
-} from '../../common/js/cache.js'
-const initState = {}
+  playingMode
+} from '../../common/js/config.js'
+
+const initState = {
+  playingMode: playingMode.loopList,
+  playingState: false,
+  playList: [],
+  currentIndex: -1
+}
 
 
 export function setPlayer(state = initState, action) {

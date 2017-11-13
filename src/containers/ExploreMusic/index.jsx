@@ -4,11 +4,19 @@ import {initScroll} from '../../common/js/initBetterScroll.js'
 import {
   getBanner,getRecommendSongList,getLatestMusic,getRecommendDjProgram
 } from '../../api/exploreMusic.js'
+import {getSongUrl} from '../../api/getSongDetail.js'
+import {createSongForExploreNewSong} from '../../common/js/createSongForExploreNewSong.js'
 import Banners from '../../components/banner/index.jsx'
 import PersonRecommend from '../../components/personRecommend/index.jsx'
 import RecommendTitle from '../../components/recommendTitle/index.jsx'
 import AvatarInfo from '../../components/avatarInfo/index.jsx'
 import PopMusic from '../../components/popMusic/index.jsx'
+import {hashHistory} from 'react-router'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import * as playerActions from '../../store/actions/player.js'
+import {mapState} from '../../store/reducers/mapState.js'
+
 import './style.styl'
 
 class ExploreMusic extends React.Component {
@@ -22,15 +30,8 @@ class ExploreMusic extends React.Component {
           initDone: false
         }
     }
-    handleSingerName(namesList) {
-      let ret = ''
-      if(namesList.length > 1) {
-        for(let i = 1 ; i < namesList.length ; i++) {
-          ret += namesList[i].name + '/'
-        }
-        return ret.slice(0,ret.length-1)
-      }
-      return namesList[0].name
+    componentWillMount() {
+      this.completeNewSong = []
     }
     componentDidUpdate(prevProps, prevState) {
       if(this.slider) {
@@ -79,13 +80,7 @@ class ExploreMusic extends React.Component {
       getLatestMusic().then((res) =>{
         if(res.code === 200) {
           res.result.map((item,index) =>{
-            ret3.push(Object.assign({},{
-              id: item.id,
-              name: item.name,
-              singerName: this.handleSingerName(item.song.artists),
-              index: index,
-              picUrl: item.song.album.blurPicUrl
-            }))
+            ret3.push(createSongForExploreNewSong(item.song))
           })
         }
         this.setState({
@@ -94,12 +89,40 @@ class ExploreMusic extends React.Component {
           newSongs: ret3,
           initDone: true
         })
+        ret3.map((item,index) =>{
+          console.log("newSong准备加载")
+          getSongUrl(item.id).then((res) =>{
+            if(res.code === 200) {
+              this.completeNewSong[index] = {...item,url: res.data[0].url}
+            }
+            console.log("newSong已经加载完成")
+          })
+        })
       })
       getRecommendDjProgram().then((res) =>{
         if(res.code === 200) {
           console.log(res)
         }
       })
+    }
+    clickRecommendSongList(item) {
+      hashHistory.push('/songList/' + item.id)
+    }
+    addNewSongToPlayer(index) {
+      if(this.completeNewSong.length !== this.state.newSongs.length) {
+        alert("歌曲正在加载,请稍后再尝试!")
+        return 
+      }
+      if(this.completeNewSong.length === this.props.player.playList.length) {
+        this.props.setCurrentIndex(index)
+        this.props.setCurrentSong()
+        this.props.setPlayingState(true)
+        return
+      }
+      this.props.setPlayList(this.completeNewSong)
+      this.props.setCurrentIndex(index)
+      this.props.setCurrentSong()
+      this.props.setPlayingState(true)
     }
     render() {
       const banners = this.state.banners
@@ -124,7 +147,7 @@ class ExploreMusic extends React.Component {
                 ?
                 songLists.map((item,index) =>{
                   return <div key={index} className="recommend-song-list-content-item">
-                    <AvatarInfo avatarInfo={item} width="220"/>
+                    <AvatarInfo avatarInfo={item} width="210" clickAvatar={this.clickRecommendSongList.bind(this,item)}/>
                   </div>
                 })
                 : 
@@ -140,7 +163,7 @@ class ExploreMusic extends React.Component {
                   ?
                   newSongs.map((item,index) =>{
                     return <div key={index} className="latest-music-content-item">
-                      <PopMusic newSong={item}/>  
+                      <PopMusic newSong={item} songIndex={index} newSongPlay={this.addNewSongToPlayer.bind(this,index)}/>  
                     </div>
                   })
                   :
@@ -154,4 +177,7 @@ class ExploreMusic extends React.Component {
     }
 }
 
-export default ExploreMusic
+function bindAction(dispatch) {
+  return bindActionCreators(playerActions,dispatch)
+}
+export default connect(mapState,bindAction)(ExploreMusic)

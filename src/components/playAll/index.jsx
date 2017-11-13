@@ -9,10 +9,23 @@ class PlayAll extends React.Component {
         super(props, context)
         this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     }
+    playAllClick() {
+        if(timeid) {
+            clearTimeout(timeid)
+        }
+        this.playallBtn.style.animation = 'playClick 0.8s'
+        let timeid = setTimeout(() =>{
+            this.playallBtn.style.animation = ''
+        },1200)
+    }
     render() {
         return (
              <div className="playall">
-                <span className="playall-btn"><i className="icon-playAll"></i>播放全部({this.props.count})</span>
+                <span className="playall-btn" 
+                onClick={this.playAllClick.bind(this)}
+                ref={(playallBtn) =>{this.playallBtn = playallBtn}}>
+                    <i className="icon-playAll"></i>播放全部({this.props.count})
+                </span>
             </div>
         )
     }

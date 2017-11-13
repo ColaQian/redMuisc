@@ -16,17 +16,48 @@ class SongInfo extends React.Component {
       }
       return '0' + newNum
     }
+    songInfoClick() {
+      if(timeid) {
+        clearTimeout(timeid)
+      }
+      this.songinformation.style.animation = 'songClick 0.8s'
+      let timeid = setTimeout(() =>{
+        this.songinformation.style.animation = ''
+      },1200)
+    }
+    songInfoDoubleClick() {
+      this.props.playSong()
+    }
+     handlePlayTime(time) {
+      let intTime = parseInt(time)
+      let min = intTime / 60 | 0
+      let sec = this._handleSecond(intTime % 60)
+      return `${min}:${sec}`
+    }
+    //处理歌曲的秒数函数
+    _handleSecond(sec) {
+      let initSec = sec.toString()
+      if(initSec.length < 2) {
+          return '0' + initSec
+      }
+      return sec
+    }
     render() {
       const song = this.props.song
       const num = this.props.num
       let back = num % 2 === 1 ? '' : '#f5f5f5'
         return (
-            <div className="song-information" style={{background: back}}>
+            <div className="song-information" 
+                style={{background: back}} 
+                onClick={this.songInfoClick.bind(this)}
+                onDoubleClick={this.songInfoDoubleClick.bind(this)}
+                ref={(songinformation) =>{this.songinformation = songinformation}}>
               <span className="song-information-item song-information-index">{this.handleIndex(num)}</span>
-              <span className="song-information-item song-information-iflove">m</span>
+              <span className="song-information-item song-information-iflove icon-fond"></span>
               <span className="song-information-item song-information-name">{song.name}</span>
               <span className="song-information-item song-information-singer">{song.singer.name}</span>
               <span className="song-information-item song-information-album">{song.album.name}</span>
+              <span className="song-information-item song-information-duration">{this.handlePlayTime(song.duration)}</span>
               <span className="song-information-item song-information-ifhigh">{song.ifHighQuality}</span>
             </div>
         )

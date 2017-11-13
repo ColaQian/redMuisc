@@ -4,12 +4,16 @@ import BScroll from 'better-scroll'
 import AvatarInfo from '../../components/avatarInfo/index.jsx'
 import SongInfo from '../../components/songInfo/index.jsx'
 import BigTitle from '../../components/bigTitle/index.jsx'
+import PlayAll from '../../components/playAll/index.jsx'
 import AlbumDescInfo from '../../components/albumDescInfo/index.jsx'
 import {createAlbum} from '../../common/js/createAlbum.js'
 import {createSong} from '../../common/js/createSong.js'
 import {getAlbumInfo} from '../../api/getAlbumInfo.js'
 import {getSongUrl} from '../../api/getSongDetail.js'
-
+import {bindActionCreators} from "redux"
+import {connect} from "react-redux"
+import * as playerActions from '../../store/actions/player.js'
+import {mapState} from '../../store/reducers/mapState.js'
 
 import './style.styl'
 
@@ -27,6 +31,9 @@ class AlbumInfo extends React.Component {
       if(this.slider) {
         this.slider.refresh()
       } 
+    }
+    componentWillMount() {
+      this.completeSongs = []
     }
     componentDidMount() {
       this._initAlbumInfo()
@@ -72,8 +79,28 @@ class AlbumInfo extends React.Component {
               albumSongs: songs
             })
           },500)
+          songs.map((item,index) =>{
+            getSongUrl(item.id).then((res) =>{
+              if(res.code === 200) {
+                this.completeSongs[index] = {...item,url: res.data[0].url}
+              }
+            })
+          })          
         }
       })
+    }
+    //将专辑的歌曲加入redux的歌曲播放列表
+    addAlbumToPLayer(index) {
+      if(this.state.albumSongs.length === this.props.player.playList.length || this.state.albumSongs.length === 0) {
+        this.props.setCurrentIndex(index)
+        this.props.setCurrentSong()
+        this.props.setPlayingState(true)
+        return
+      }
+      this.props.setPlayList(this.completeSongs)
+      this.props.setCurrentIndex(index)
+      this.props.setCurrentSong()
+      this.props.setPlayingState(true)
     }
     render() {
       let albumInfo = this.state.albumInfo
@@ -107,15 +134,17 @@ class AlbumInfo extends React.Component {
                   }
                 </div>
               </div>
-              <div className="album-info-playall">
+              {/*<div className="album-info-playall">
                 <span className="album-info-playall-btn">播放全部({this.state.albumSongs.length})</span>
-              </div>
+              </div>*/}
+              <PlayAll count={this.state.albumSongs.length}/>
               <div className="album-info-content-wrapper" ref={(albumContent) =>{this.albumContent=albumContent}}>
                 <div className="album-info-content">
                   {
                     this.state.initDone 
                     ? this.state.albumSongs.map((item,index) =>{
-                          return <SongInfo key={index} song={item} num={index}/>
+                          return <SongInfo key={index} song={item} num={index} 
+                                           playSong={this.addAlbumToPLayer.bind(this,index)}/>
                         })
                     : <p>加载中...</p>
                   }
@@ -127,4 +156,7 @@ class AlbumInfo extends React.Component {
     }
 }
 
-export default AlbumInfo
+function bindAction(dispatch) {
+  return bindActionCreators(playerActions, dispatch)
+}
+export default connect(mapState, bindAction)(AlbumInfo)

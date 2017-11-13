@@ -10,6 +10,10 @@ import {getPlayListDetail} from '../../api/getSongList.js'
 import {playListDetail} from '../../common/js/createPlaylist.js'
 import {getSongDetail,getSongUrl} from '../../api/getSongDetail.js'
 import {createSong} from '../../common/js/createSong.js'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import * as playerActions from '../../store/actions/player.js'
+import {mapState} from '../../store/reducers/mapState.js'
 
 import './style.styl'
 
@@ -22,6 +26,9 @@ class SongListDetail extends React.Component {
           songs: [],
           initDone: false
         }
+    }
+    componentWillMount() {
+      this.completeSongs = []
     }
     componentDidUpdate(prevProps, prevState) {
       if(this.slider) {
@@ -40,43 +47,40 @@ class SongListDetail extends React.Component {
     _initSongList() {
       const id = this.props.params.id
       let playList = null
-      let middle = []
       getPlayListDetail(id).then((res) =>{
-        console.log("准备加载....")
         if(res.code === 200) {
+          console.log(res)
           playList = playListDetail(res.playlist)
-          console.log("songList 设置好了")
           this.setState({
             songListInfo: playList,
+            songs: playList.songIds,
             initDone: true 
           })
-          playList.songIds.forEach((id,index) =>{
-            getSongDetail(id).then((res) =>{
-              let song = res.songs[0]
-              middle[index] = createSong(song)
-            })
-          })
-          setTimeout(() =>{
-            this.setState({
-              songs: middle
-            })
-            console.log(middle[0])
-          },2000)
         }
-        playList.songIds.forEach((id,index) =>{
-            getSongUrl(id).then((res) =>{
-              middle[index] = {...middle[index],url: res.data[0].url}
+        playList.songIds.forEach((item,index) =>{
+            getSongUrl(item.id).then((res) =>{
+              if(res.code === 200) {
+                this.completeSongs[index] = {...item,url: res.data[0].url}
+              }
             })
-            if(index === this.playList.songIds.length - 1) {
-              setTimeout(() =>{
-                this.setState({
-                  songs: middle
-                })
-                console.log(middle[0])
-              },500)
-            }
         })
       })
+    }
+    addSongsToPlayer(index) {
+      if(this.completeSongs.length !== this.state.songs.length) {
+        alert("歌曲正在加载，请稍后尝试")
+        return 
+      }
+      if(this.state.songs.length === this.props.player.playList.length || this.state.songs.length === 0) {
+        this.props.setCurrentIndex(index)
+        this.props.setCurrentSong()
+        this.props.setPlayingState(true)
+        return
+      }
+      this.props.setPlayList(this.completeSongs)
+      this.props.setCurrentIndex(index)
+      this.props.setCurrentSong()
+      this.props.setPlayingState(true)
     }
     render() {
       let songListInfo = this.state.songListInfo
@@ -109,15 +113,12 @@ class SongListDetail extends React.Component {
                   }
                 </div>
               </div>
-              {/*<div className="song-list-detail-playall">
-                <span className="song-list-detail-playall-btn">播放全部({this.state.songs.length})</span>
-              </div>*/}
               <PlayAll count={this.state.songs.length}/>
               <div className="song-list-content-wrapper" ref={(songListContent) =>{this.songListContent=songListContent}}>
                 <div className="song-list-content">
                   {
                     this.state.songs.map((item,index) =>{
-                      return <SongInfo key={index} song={item} num={index}/>
+                      return <SongInfo key={index} song={item} num={index} playSong={this.addSongsToPlayer.bind(this,index)}/>
                     })
                   }
                 </div>
@@ -127,5 +128,7 @@ class SongListDetail extends React.Component {
         )
     }
 }
-
-export default SongListDetail
+function bindAction(dispatch) {
+  return bindActionCreators(playerActions,dispatch)
+}
+export default connect(mapState,bindAction)(SongListDetail)

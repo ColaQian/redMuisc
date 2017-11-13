@@ -94,12 +94,11 @@ class Search extends React.Component {
               let songsCount = 0
               res.result.songs.map((item) =>{
                 songs.push({
-                  songId: item.id,
-                  songName:item.name,
-                  singerId: item.artists[0].id,
-                  singerName: item.artists[0].name,
-                  albumId: item.album.id,
-                  albumName: item.album.name
+                  id: item.id,
+                  name:item.name,
+                  singer: {id: item.artists[0].id,name: item.artists[0].name},
+                  albumId: {id: item.album.id,name: item.album.name},
+                  duration: item.duration / 1000
                 })
               })
               songsCount = res.result.songCount

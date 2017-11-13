@@ -2,7 +2,7 @@ import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import {getRank} from '../../api/getRank.js'
 import {hashHistory} from 'react-router'
-import {playListDetail} from '../../common/js/createPlaylist.js'
+import {playListDetailForRank} from '../../common/js/createPlaylistForRank.js'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as rankInfoActions from '../../store/actions/rankInfo.js' 
@@ -19,7 +19,8 @@ class RankItem extends React.Component {
           picUrl: null,
           initDone: false,
           totalSongs: [],
-          listInfo: null
+          listInfo: null,
+          id: 0
         }
     }
     componentWillMount() {
@@ -58,25 +59,14 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
                 //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
                 //的加载变得缓慢，在这里可以暂时先不考虑获取，
                 //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
-              console.log('这是拉拉'+ret.length)
             }
           })
           break
@@ -101,24 +91,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -143,24 +120,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -185,24 +149,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -227,24 +178,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -269,24 +207,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -311,24 +236,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -353,24 +265,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -395,24 +294,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -437,24 +323,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -479,24 +352,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break
@@ -521,24 +381,11 @@ class RankItem extends React.Component {
                 picUrl: pic,
                 id: id
               })
-              setTimeout(() =>{
-                res.result.tracks.map((item) =>{
-                  songs.push({
-                    id: item.id,
-                    name: item.name,
-                    album: {id:item.album.id,name: item.album.name,picUrl: item.album.picUrl},
-                    singer: {id: item.artists[0].id,name: item.artists[0].name}
-                  })
-                })
-                //由于返回的结果里面没有歌曲的播放url，需要重新发送请求歌曲的地址，需要大量的时间，会导致页面
-                //的加载变得缓慢，在这里可以暂时先不考虑获取，
-                //可以在进入详情页面后，歌曲列表显示出来，在发送请求获取歌曲的播放地址
-                listInfo = playListDetail(res.result)
+                listInfo = playListDetailForRank(res.result)
                 this.setState({
-                  totalSongs: songs,
-                  listInfo: listInfo
+                  totalSongs: listInfo.songIds,
+                  listInfo: {...listInfo,songIds: null}
                 })
-              },20)
             }
           })
           break

@@ -4,13 +4,15 @@ class Song {
     singer,
     name,
     album,
-    ifHighQuality
+    ifHighQuality,
+    duration
   }) {
     this.id = id
     this.singer = singer
     this.name = name
     this.album = album
     this.ifHighQuality = ifHighQuality
+    this.duration = duration
   }
 }
 export function createSong(song) {
@@ -26,7 +28,8 @@ export function createSong(song) {
       id: song.ar[0].id,
       name: song.ar[0].name
     },
-    ifHighQuality: song.h ? true : false
+    ifHighQuality: song.h ? true : false,
+    duration: song.dt / 1000
   })
 }
 

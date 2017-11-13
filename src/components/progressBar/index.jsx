@@ -10,7 +10,17 @@ class ProgressBar extends React.Component {
     }
     componentWillMount() {
       this.touch = {}
-      this.BAR_BTN = 15
+      this.BAR_BTN = 12
+    }
+    componentDidUpdate() {
+      this._updateSongPlayingTime(this.props.currentSongPercent)
+    }
+    _updateSongPlayingTime(percent) {
+      if(percent > 0 && !this.touch.initialState) {
+        const barWidth = this.refs.progressBar.clientWidth - this.BAR_BTN
+        const offsetWidth = percent * barWidth
+        this._offsetWidth(offsetWidth)
+      }
     }
      progressTouchStart(e) {
         e.preventDefault()
@@ -41,6 +51,7 @@ class ProgressBar extends React.Component {
       _triggerPercent() {
         const barWidth = this.refs.progressBar.clientWidth - this.BAR_BTN
         const newPercent = this.refs.progress.clientWidth / barWidth
+        this.props.updateCurrentSongProgress(newPercent)
       }
       _offsetWidth(offsetWidth) {
         this.refs.progress.style.width = `${offsetWidth}px`

@@ -88,34 +88,72 @@
           position: absolute
           display: inline-block
           background: #d73435
+          text-align: center
           &.mini-player-play-presong
             left: 0
             top: 12px
             height: 26px
+            line-height: 26px
+            font-size: 15px
             width: 26px
             border-radius: 50%
           &.mini-player-play-toggle
             height: 30px
             width: 30px
+            height: 30px
+            line-height: 30px
+            font-size: 18px
+            text-align: center
             border-radius: 50%
             top: 10px
             left: 45px
           &.mini-player-play-next
             height: 26px
             width: 26px
+            line-height: 26px
+            font-size: 15px
             border-radius: 50%
             top: 12px
             right: 0
       .mini-player-songinfo-progress
-        flex: 1
+        flex: 2
         display: inline-block
+        position: relative
         height: 50px
         .mini-player-songinfo
           display: inline-block
+          width: 100%
+          height: 20px
+          position: relative
+          .mini-player-songinfo-name
+            position: absolute
+            left: 0
+            top: 8px
+            height: 12px
+            line-height: 12px
+            font-size: 12px
+            .mini-player-songinfo-singer
+              color: #5a5a5a
+          .mini-player-songinfo-time
+            position: absolute
+            right: 0
+            top: 8px
+            height: 12px
+            line-height: 12px
+            font-size: 12px
         .mini-player-progress
           display: inline-block
+          position: absolute
+          left: 0
+          bottom: 5px
           width: 100%
       .mini-player-funcs
         flex: 1
-        display: inline-block
+        display: flex
         height: 50px
+        .mini-player-funcs-item
+          flex: 1
+          height: 50px
+          line-height: 50px
+          font-size: 23px
+          text-align: center

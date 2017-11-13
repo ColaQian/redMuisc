@@ -61,7 +61,21 @@ function handleSongIds(ids) {
     let ret = []
 
     ids.forEach((item) => {
-        ret.push(item.id)
+        ret.push({
+            id: item.id,
+            name: item.name,
+            singer: {
+                id: item.ar[0].id,
+                name: item.ar[0].name
+            },
+            album: {
+                id: item.al.id,
+                name: item.al.name,
+                picUrl: item.al.picUrl
+            },
+            duration: item.dt / 1000,
+            ifHighQuality: item.h ? true : false,
+        })
     })
 
     return ret

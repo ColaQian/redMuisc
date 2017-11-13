@@ -17,16 +17,31 @@ class PopMusic extends React.Component {
       }
       return '0' + newNum
     }
+    newSongClick() {
+      if(timeid) {
+            clearTimeout(timeid)
+        }
+      this.newSong.style.animation = 'newSongClick 0.8s'
+      let timeid = setTimeout(() =>{
+        this.newSong.style.animation = ''
+      },1200)
+    }
+    newSongDoubleClick() {
+      this.props.newSongPlay()
+    }
     render() {
       const newSong = this.props.newSong
-      const newSongIndex = this.handleNewSongIndex(newSong.index)
+      const newSongIndex = this.handleNewSongIndex(this.props.songIndex)
         return (
-            <div className="new-song-wrapper">
+            <div className="new-song-wrapper" 
+                 onClick={this.newSongClick.bind(this)}
+                 onDoubleClick={this.newSongDoubleClick.bind(this)}
+                 ref={(newSong) =>{this.newSong=newSong}}>
               <span className="new-song-index">{newSongIndex}</span>
-              <span className="new-song-img" style={{ backgroundImage: 'url(' + newSong.picUrl + ')'}}></span>
+              <span className="new-song-img" style={{ backgroundImage: 'url(' + newSong.album.picUrl + ')'}}></span>
               <div className="new-song-desc">
                 <p>{newSong.name}</p>
-                <span>{newSong.singerName}</span>
+                <span>{newSong.singer.name}</span>
               </div>
             </div>
         )

@@ -1,5 +1,7 @@
 import * as types from '../actionTypes.js'
-const initState = {}
+const initState = {
+  songs: []
+}
 
 export function rankInfo(state = initState, action) {
   switch (action.type) {

@@ -4,7 +4,7 @@ import PlayAll from '../../components/playAll/index.jsx'
 import SongInfo from '../../components/songInfo/index.jsx'
 import {bindActionCreators} from "redux"
 import {connect} from "react-redux"
-import * as playerActions from '../../store/actions/singerInfo.js'
+import * as playerActions from '../../store/actions/player.js'
 import {mapState} from '../../store/reducers/mapState.js'
 
 import './style.styl'
@@ -13,6 +13,18 @@ class SingerSongs extends React.Component {
     constructor(props, context) {
         super(props, context)
         this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+    }
+    addSingerHotSongsToPlayer(index) {
+      if(this.props.player.playList.length === this.props.singerInfo.hotSongs.length) {
+        this.props.setCurrentIndex(index)
+        this.props.setCurrentSong()
+        this.props.setPlayingState(true)
+        return
+      }
+      this.props.setPlayList(this.props.singerInfo.hotSongs)
+      this.props.setCurrentSong(index)
+      this.props.setCurrentSong()
+      this.props.setPlayingState(true)
     }
     render() {
       const singerSongs = this.props.singerInfo.hotSongs
@@ -23,7 +35,7 @@ class SingerSongs extends React.Component {
                   {
                     singerSongs
                     ? singerSongs.map((item,index) =>{
-                      return <SongInfo song={item} num={index} key={index}/> 
+                      return <SongInfo song={item} num={index} key={index} playSong={this.addSingerHotSongsToPlayer.bind(this,index)}/> 
                       })
                     : ''
                   }
