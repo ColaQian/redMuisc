@@ -7,7 +7,8 @@ const initState = {
   playingMode: playingMode.loopList,
   playingState: false,
   playList: [],
-  currentIndex: -1
+  currentIndex: -1,
+  currentSong: null
 }
 
 

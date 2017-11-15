@@ -93,6 +93,8 @@
         "react-addons-pure-render-mixin": "^15.6.0",
         "react-id-swiper": "^1.5.0",
         "stylus": "^0.54.5",
+        "lyric-parser": "^1.0.1",
+        "js-base64": "^2.1.9",
         "stylus-loader": "^2.1.1"
     }
 }

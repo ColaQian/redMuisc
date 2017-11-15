@@ -15,14 +15,10 @@ class SingerSongs extends React.Component {
         this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     }
     addSingerHotSongsToPlayer(index) {
-      if(this.props.player.playList.length === this.props.singerInfo.hotSongs.length) {
-        this.props.setCurrentIndex(index)
-        this.props.setCurrentSong()
-        this.props.setPlayingState(true)
-        return
+      if(this.props.player.currentIndex < 0 || this.props.singerInfo.hotSongs[0].id !== this.props.player.playList[0].id) {
+        this.props.setPlayList(this.props.singerInfo.hotSongs)
       }
-      this.props.setPlayList(this.props.singerInfo.hotSongs)
-      this.props.setCurrentSong(index)
+      this.props.setCurrentIndex(index)
       this.props.setCurrentSong()
       this.props.setPlayingState(true)
     }

@@ -95,7 +95,6 @@ class ExploreMusic extends React.Component {
             if(res.code === 200) {
               this.completeNewSong[index] = {...item,url: res.data[0].url}
             }
-            console.log("newSong已经加载完成")
           })
         })
       })

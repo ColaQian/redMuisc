@@ -20,9 +20,9 @@ class SongInfo extends React.Component {
       if(timeid) {
         clearTimeout(timeid)
       }
-      this.songinformation.style.animation = 'songClick 0.8s'
+      this.songInformation.style.animation = 'songClick 0.8s'
       let timeid = setTimeout(() =>{
-        this.songinformation.style.animation = ''
+        this.songInformation.style.animation = ''
       },1200)
     }
     songInfoDoubleClick() {
@@ -51,7 +51,7 @@ class SongInfo extends React.Component {
                 style={{background: back}} 
                 onClick={this.songInfoClick.bind(this)}
                 onDoubleClick={this.songInfoDoubleClick.bind(this)}
-                ref={(songinformation) =>{this.songinformation = songinformation}}>
+                ref={(songInformation) =>{this.songInformation=songInformation}}>
               <span className="song-information-item song-information-index">{this.handleIndex(num)}</span>
               <span className="song-information-item song-information-iflove icon-fond"></span>
               <span className="song-information-item song-information-name">{song.name}</span>

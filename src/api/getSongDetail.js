@@ -28,3 +28,27 @@ export function getSongUrl(id) {
     return Promise.resolve(response.data)
   })
 }
+
+export function getSongLyric(id) {
+  const url = '/lyric'
+
+  return axios.get(url,{
+    params: {
+      id
+    }
+  }).then((response) =>{
+    return Promise.resolve(response.data)
+  })
+} 
+
+export function getSimiSongs(id) {
+  const url = '/simi/song'
+
+  return axios.get(url,{
+    params: {
+      id
+    }
+  }).then((response) =>{
+    return Promise.resolve(response.data)
+  })
+}

@@ -91,13 +91,20 @@ class AlbumInfo extends React.Component {
     }
     //将专辑的歌曲加入redux的歌曲播放列表
     addAlbumToPLayer(index) {
-      if(this.state.albumSongs.length === this.props.player.playList.length || this.state.albumSongs.length === 0) {
+      /*if(this.state.albumSongs.length === this.props.player.playList.length || this.state.albumSongs.length === 0) {
         this.props.setCurrentIndex(index)
         this.props.setCurrentSong()
         this.props.setPlayingState(true)
         return
       }
       this.props.setPlayList(this.completeSongs)
+      this.props.setCurrentIndex(index)
+      this.props.setCurrentSong()
+      this.props.setPlayingState(true)*/
+
+      if(this.props.player.currentIndex < 0 || this.props.player.playList[0].id !== this.state.albumSongs[0].id) {
+        this.props.setPlayList(this.completeSongs)
+      }
       this.props.setCurrentIndex(index)
       this.props.setCurrentSong()
       this.props.setPlayingState(true)

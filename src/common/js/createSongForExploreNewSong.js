@@ -34,7 +34,7 @@ export function createSongForExploreNewSong(song) {
   })
 }
 
-function handleSingerName(namesList) {
+export function handleSingerName(namesList) {
   let ret = ''
   if (namesList.length > 1) {
     for (let i = 1; i < namesList.length; i++) {
