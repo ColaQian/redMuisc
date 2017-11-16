@@ -20,4 +20,4 @@
  7. 播放器界面: 核心功能，可切换mini播放器和normal播放器，可进行播放模式的切换，拖动进度条定位歌曲播放时间，上一曲，下一曲，位置专辑封面的圆盘转动显示，歌词显示，与当前播放歌曲相似歌曲的推荐，收藏歌曲(功能待实现)，音量调节(功能待实现),播放列表(功能待实现)
  
 #### 相关页面实现预览
-![播放器界面](https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116004747.png =600*300)
+![播放器界面](https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116004747.png =600x300)
