@@ -29,7 +29,7 @@
 #### 相关页面实现预览
 
 ##### 播放器界面
-<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116004747.png" width = "600" height = "300" alt="歌手列表" align=center />
+<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116004747.png" width = "700" height = "300" alt="歌手列表" align=center />
 
 ##### 搜索界面
 <img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116102148.png" width = "600" height = "300" alt="歌手列表" align=center />
