@@ -38,4 +38,5 @@
 ![歌单列表](https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E6%AD%8C%E5%8D%95%E5%88%97%E8%A1%A8.png =600x300)
 
 ##### 歌手列表
-![歌手列表](https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116102144.png =600x300)
+<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116102144.png" width = "500" height = "250" alt="歌手列表" align=center />
+![歌手列表](https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116102144.png )
