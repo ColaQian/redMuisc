@@ -52,3 +52,17 @@ export function getSimiSongs(id) {
     return Promise.resolve(response.data)
   })
 }
+
+export function getSongComment(id,limit,offset) {
+  const url = '/comment/music'
+
+  return axios.get(url,{
+    params: {
+      id,
+      limit,
+      offset
+    }
+  }).then((response) =>{
+    return Promise.resolve(response.data)
+  })
+}

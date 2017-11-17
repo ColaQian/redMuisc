@@ -33,3 +33,10 @@
      type: types.SET_CURRENT_SONG
    }
  }
+
+ export function addSongToPlayList(song) {
+   return {
+     type: types.ADD_SONG_TO_PLAYLIST,
+     data: song
+   }
+ }

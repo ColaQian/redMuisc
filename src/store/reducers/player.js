@@ -39,7 +39,28 @@ export function setPlayer(state = initState, action) {
         currentSong: state.playList[state.currentIndex]
       })
 
+    case types.ADD_SONG_TO_PLAYLIST: 
+      let ret = addSongToPlayList(state.playList,action.data)
+      return Object.assign({},state,{
+        playList: ret
+      })
+
     default:
       return state
   }
+}
+
+function addSongToPlayList(list, song) {
+  let findex = list.findIndex((item) =>{
+    return item.id === song.id
+  })
+
+  if(findex < 0) {
+    list.push(song)
+    return list
+  }
+
+  list.splice(findex,1)
+  list.push(song)
+  return list
 }

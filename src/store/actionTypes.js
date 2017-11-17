@@ -4,6 +4,7 @@ export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX'
 export const SET_PLAYING_STATE = 'SET_PLAYING_STATE'
 export const SET_PLAYING_MODE = 'SET_PLAYING_MODE'
 export const SET_CURRENT_SONG = 'SET_CURRENT_SONG'
+export const ADD_SONG_TO_PLAYLIST = 'ADD_SONG_TO_PLAYLIST'
 
 //歌手信息(热门歌曲,专辑，mvs,歌手介绍，相似歌手)
 export const SET_SINGER_HOT_SONGS = 'SET_SINGER_HOT_SONGS'

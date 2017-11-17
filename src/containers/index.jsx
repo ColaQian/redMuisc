@@ -2,12 +2,15 @@ import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import SideBar from '../components/sideBar/index.jsx'
 import ProgressBar from '../components/progressBar/index.jsx'
+import Comment from '../components/comment/index.jsx'
 import Lyric from 'lyric-parser'
 import {getSimiSongs} from '../api/getSongDetail.js'
+import {getSongLyric,getSongUrl,getSongComment} from '../api/getSongDetail.js'
 import {createSongForExploreNewSong} from '../common/js/createSongForExploreNewSong.js'
+import {createComment} from '../common/js/comment.js'
 import {initScroll} from '../common/js/initBetterScroll.js'
-import {getSongLyric} from '../api/getSongDetail.js'
 import {playingMode} from '../common/js/config.js'
+import {debunce} from '../common/js/util.js'
 import {hashHistory} from 'react-router'
 import {bindActionCreators} from "redux"
 import {connect} from "react-redux"
@@ -34,13 +37,12 @@ class App extends React.Component {
       this.loadingLyric = false
       this.currentLyricLine = 0
       this.simiSongs = []
+      this.hotComments = []
+      this.newComments = []
+      this.commentOffset = 0
+      this.totalComments = 0
+      this.ifMoreComment = true
     }
-   /* componentWillUpdate() {
-      if(this.lyric !== null) {
-          this.lyric = null
-          this.currentLyricLine = 0
-      }
-    }*/
     componentDidUpdate() {
       if(this.props.player.playingState) {
         if(!this.loadingLyric && this.props.player.currentSong !== null) {
@@ -49,6 +51,7 @@ class App extends React.Component {
             this.lyric.stop()
             this.lyric = null
           }
+          //获取歌曲歌词
           getSongLyric(this.props.player.currentSong.id).then((res) =>{
             if(res.code === 200 && res.lrc.lyric) {
               this.lyric = new Lyric(res.lrc.lyric,({lineNum,txt}) =>{
@@ -69,30 +72,100 @@ class App extends React.Component {
           //获取当前播放歌曲的相似歌曲
           getSimiSongs(this.props.player.currentSong.id).then((res) =>{
               if(res.code === 200) {
-                  console.log("相似歌曲已经找到")
-                  if(res.songs.length === 0) {
-                      console.log("没有找到相似歌曲")
-                      return
+                console.log("相似歌曲已经找到")
+                if(res.songs.length === 0) {
+                  console.log("没有找到相似歌曲")
+                    return
                   }
                   let simiSong = []
                   res.songs.map((item) =>{
-                      simiSong.push({...createSongForExploreNewSong(item),url: item.mp3Url})
+                    simiSong.push(createSongForExploreNewSong(item))
                   })
-                  console.log("相似歌曲已经加载")
-                  this.simiSongs = simiSong
+                  simiSong.map((item,index) =>{
+                    getSongUrl(item.id).then((res) =>{
+                        if(res.code === 200) {
+                            this.simiSongs[index] = {...item,url: res.data[0].url}
+                        }
+                    })
+                  })
               }
+          })
+          //获取歌曲的评论
+          getSongComment(this.props.player.currentSong.id,10).then((res) =>{
+            if(this.hotComments.length > 0 || this.newComments.length  > 0) {
+              this.hotComments = []
+              this.newComments = []
+            }
+            if(res.code === 200) {
+              console.log(res)
+              this.ifMoreComment = res.more
+              this.totalComments = res.total
+              if(res.hotComments.length > 0) {
+                res.hotComments.map((item) =>{
+                  this.hotComments.push(createComment(item))
+                })
+              }
+              if(res.comments.length > 0) {
+                res.comments.map((item) =>{
+                  this.newComments.push(createComment(item))
+                })
+              }
+            }
           })
         }
         this.audio.play()
       }
-      if(this.LyricSlider && this.normalPlayerSlider) {
+      if(this.LyricSlider && this.normalPlayerSlider && this.playerComment) {
         this.LyricSlider.refresh()
         this.normalPlayerSlider.refresh()
+        this.playerCommentSlider.refresh()
       }
     }
     componentDidMount() {
         this.LyricSlider = initScroll(this.lyricScroll)
         this.normalPlayerSlider = initScroll(this.normalPlayer)
+        this.playerCommentSlider = initScroll(this.playerComment)
+        this.LyricSlider.on('scroll',debunce(() =>{
+          this.normalPlayerSlider.disable()
+        },200))
+        this.LyricSlider.on('scrollEnd',() =>{
+          setTimeout(() =>{
+            this.normalPlayerSlider.enable()
+            this.normalPlayerSlider.refresh()
+            this.playerComment.click()
+          },1200)
+        })
+        this.playerCommentSlider.on('scroll',debunce(() =>{
+          this.normalPlayerSlider.disable()
+          let playerComment = this.playerComment.getBoundingClientRect().bottom
+          let playerCommentScroll = this.playerCommentScroll.getBoundingClientRect().bottom
+          if(playerComment - playerCommentScroll > 20) {
+            if(this.ifMoreComment) {
+              getSongComment(this.props.player.currentSong.id,10,this.commentOffset+10).then((res) =>{
+                if(res.code === 200) {
+                  this.ifMoreComment = res.more
+                  let com = []
+                  if(res.comments.length > 0) {
+                    res.comments.map((item) =>{
+                      com.push(createComment(item))
+                      console.log('com length is ' + com.length)
+                    })
+                    this.newComments = this.newComments.concat(com)
+                    console.log('newCom的长度是 ' + this.newComments.length)
+                  }
+                  this.commentOffset += 10
+                }
+              })
+            }
+          }
+        },200))
+        this.playerCommentSlider.on('scrollEnd',() =>{
+          setTimeout(() =>{
+            this.normalPlayerSlider.enable()
+            this.normalPlayerSlider.refresh()
+            this.playerComment.click()
+          },1200)
+        })
     }
     //切换到上一曲
     toPreSong() {
@@ -145,7 +218,13 @@ class App extends React.Component {
             clearTimeout(playingStateId)
         }
         let playingStateId = setTimeout(() =>{
-            playingState ? this.audio.play() : this.audio.pause()
+            if(playingState) {
+               this.audio.play()
+               this.lyric.togglePlay()
+            }else{
+               this.audio.pause()
+               this.lyric.togglePlay()
+            } 
         },20)
     }
     //将歌曲的时间由秒转化为mm:ss格式
@@ -186,6 +265,9 @@ class App extends React.Component {
         if(this.props.player.playingMode === playingMode.loop) {
             this.audio.currentTime = 0
             this.audio.play()
+            if(this.lyric !== null) {
+                this.lyric.seek(0)
+            }
         }else {
             this.toNextSong()
         }
@@ -193,13 +275,29 @@ class App extends React.Component {
     //点击歌曲的进度条，更新歌曲的播放的时间
     updateCurrentSongProgress(percent) {
         let currentTime = this.props.player.currentSong.duration * percent
+        console.log()
         this.audio.currentTime = currentTime
         if(!this.props.player.playingState) {
             this.props.setPlayingState(!this.props.player.playingState)
         }
+        if(this.lyric !== null) {
+            this.lyric.seek(currentTime * 1000)
+        }
     }
     //点击切换是否显示主播放器
     toggleFullScreenPlayer() {
+      if(this.props.player.playList.length === 0) {
+        return 
+      }
+      if(timeid) {
+        clearTimeout(timeid)
+      }
+      this.normalPlayerWrapper.style.animation = 'playerToggle 0.4s'
+      this.miniPlayerAvatar.style.animation = 'miniPlayerAvatarClick 0.8s'
+      let timeid = setTimeout(() =>{
+      this.normalPlayerWrapper.style.animation = ''
+      this.miniPlayerAvatar.style.animation = ''
+      },1200)
       this.setState({
         ifFullScreen: !this.state.ifFullScreen
       })
@@ -218,6 +316,29 @@ class App extends React.Component {
       })
       hashHistory.push('/singerInfo/' + this.props.player.currentSong.singer.id)
     }
+    //双击击当前播放歌曲的相似歌曲，加入当前播放列表
+    simiSongDoubleClick(song) {
+      this.loadingLyric = false
+      this.currentLyricLine = 0
+      this.props.addSongToPlayList(song)
+      this.props.setCurrentIndex(this.props.player.playList.length-1)
+      this.props.setCurrentSong()
+      this.props.setPlayingState(true)
+    } 
+    //单击当前播放歌曲的相似歌曲处理函数
+    simiSongClick(index) {
+      if(timeid) {
+        clearTimeout(timeid)
+      }
+      this.simiSong.children[index+1].style.animation = 'songClick 0.8s'
+      let timeid = setTimeout(() =>{
+        this.simiSong.children[index+1].style.animation = ''
+      },1200)
+    }
+    //全局范围内的后退一步
+    backStep() {
+      window.history.back()
+    }
     render() {
         const sideItem = this.state.sideItem
         const myMusic = this.state.myMusic
@@ -230,18 +351,18 @@ class App extends React.Component {
         let duration = '0:00'
         let albumName = ''
         if(currentSong !== null) {
-            songUrl = currentSong.url
-            songName = currentSong.name
-            singerName = currentSong.singer.name
-            albumName = currentSong.album.name
-            playList = currentSong
-            duration = this.handlePlayTime(currentSong.duration)
-            picUrl = currentSong.album.picUrl
+          songUrl = currentSong.url
+          songName = currentSong.name
+          singerName = currentSong.singer.name
+          albumName = currentSong.album.name
+          playList = currentSong
+          duration = this.handlePlayTime(currentSong.duration)
+          picUrl = currentSong.album.picUrl
         }
         return (
             <div className="nm-music">
                 <div className="nm-sidebar">
-                    <div className="nm-sidebar-back-wrapper">
+                    <div className="nm-sidebar-back-wrapper" onClick={this.backStep.bind(this)}>
                         <span className="nm-sidebar-back">back</span>
                     </div>
                     <SideBar sideItem={sideItem} sideTitle="发现"/>
@@ -255,7 +376,9 @@ class App extends React.Component {
                     }
                 </div>
                 <div className="nm-player">
-                    <div className="normal-player-wrapper" style={{display: this.state.ifFullScreen ? 'block' : 'none'}}>
+                    <div className="normal-player-wrapper" 
+                         style={{display: this.state.ifFullScreen ? 'block' : 'none'}}
+                         ref={(normalPlayerWrapper) =>{this.normalPlayerWrapper=normalPlayerWrapper}}>
                       <div className="normal-player-background" style={{background:'url('+ picUrl +')'}}></div>
                       <div className="normal-player-background2"></div>
                       <div className="normal-player" ref={(normalPlayer) =>{this.normalPlayer=normalPlayer}}>
@@ -302,14 +425,46 @@ class App extends React.Component {
                             </div>
                           </div>
                           <div className="normal-player-bottom">
-                            <div className="normal-player-bottom-comment-wrapper"></div>
-                            <div className="normal-player-bottom-simi-wrapper">
+                            <div className="normal-player-bottom-comment-wrapper">
+                              <p className="normal-player-bottom-comment-title">评论({this.totalComments})</p>
+                              <div className="normal-player-bottom-comment"
+                                   ref={(playerComment) =>{this.playerComment=playerComment}}>
+                                <div className="normal-player-bottom-comment-scroll"
+                                   ref={(playerCommentScroll) =>{this.playerCommentScroll=playerCommentScroll}}>
+                                  <p className="normal-player-bottom-comment-hot">精彩评论</p>
+                                  {
+                                    this.hotComments.length === 0
+                                    ?
+                                    <p>暂无评论</p>
+                                    :
+                                    this.hotComments.map((item,index) =>{
+                                      return <Comment comment={item} key={index}/>
+                                    })
+                                  }
+                                  <p className="normal-player-bottom-comment-hot normal-player-bottom-comment-new">最新评论</p>
+                                  {
+                                    this.newComments.length === 0
+                                    ?
+                                    <p>暂无评论</p>
+                                    :
+                                    this.newComments.map((item,index) =>{
+                                      return <Comment comment={item} key={index}/>
+                                    })
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                            <div className="normal-player-bottom-simi-wrapper"
+                                 ref={(simiSong) =>{this.simiSong=simiSong}}>
                               <p className="normal-player-bottom-simi-title">相似歌曲</p>
                               {
                                 this.simiSongs.length > 0 
                                 ?
                                 this.simiSongs.map((item,index) =>{
-                                    return <p className="normal-player-bottom-simi-songinfo" key={index}>
+                                    return <p className="normal-player-bottom-simi-songinfo" 
+                                              key={index}
+                                              onDoubleClick={this.simiSongDoubleClick.bind(this,item)}
+                                              onClick={this.simiSongClick.bind(this,index)}>
                                                 <span className="normal-player-bottom-simi-item normal-player-bottom-simi-song">{item.name}</span>
                                                 <span className="normal-player-bottom-simi-item normal-player-bottom-simi-singer">{item.singer.name}</span>
                                             </p>
@@ -324,8 +479,10 @@ class App extends React.Component {
                     </div>
                     <div className="mini-player">
                     <div className="mini-player-line"></div>
-                      <div className="mini-player-avatar-wrapper" onClick={this.toggleFullScreenPlayer.bind(this)}>
-                        <div className="mini-player-toggle icon-boost"></div>
+                      <div className="mini-player-avatar-wrapper" 
+                           onClick={this.toggleFullScreenPlayer.bind(this)}
+                           ref={(miniPlayerAvatar) =>{this.miniPlayerAvatar=miniPlayerAvatar}}>
+                        <div className={this.state.ifFullScreen ? "mini-player-toggle icon-shrink" : "mini-player-toggle icon-boost"}></div>
                         <img src={picUrl === null ? '../common/images/timg.jpg' : picUrl} className="mini-player-avatar"/>
                       </div> 
                       <div className="mini-player-play-wrapper">
@@ -351,7 +508,9 @@ class App extends React.Component {
                         <span className={this.props.player.playingMode === playingMode.loopList ? "mini-player-funcs-item icon-looplist" : 'mini-player-funcs-item icon-loopone'}
                               onClick={this.togglePlayingMode.bind(this)}></span>
                         <span className="mini-player-funcs-item icon-voice"></span>
-                        <span className="mini-player-funcs-item icon-list"></span>
+                        <span className="mini-player-funcs-item mini-player-funcs-list icon-list">
+                          <p className="mini-player-funcs-list-count">{this.props.player.playList.length}</p>
+                        </span>
                       </div>
                     </div>
                 </div>

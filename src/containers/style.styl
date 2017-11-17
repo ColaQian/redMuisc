@@ -128,10 +128,13 @@
                 width: 100%
                 letter-spacing: 1px
                 .normal-player-top-right-songinfo-name
+                  margin: 10px 0
                   height: 20px
                   line-height: 20px
                   font-size: 20px
-                  margin: 10px 0
+                  overflow: hidden
+                  white-space: nowrap
+                  text-overflow: ellipsis
                 .normal-player-top-right-songinfo-alandsin
                   display: inline-block
                   height: 13px
@@ -162,11 +165,34 @@
             position: relative
             width: 100%
             height: 800px
-            padding-top: 40px
+            padding-top: 50px
             .normal-player-bottom-comment-wrapper
               position: absolute
               width: 60%
               left: 5%
+              .normal-player-bottom-comment-title
+                width: 100%
+                height: 30px
+                line-height: 20px
+                font-size: 18px
+                border-bottom: 1px solid #919191
+                margin-bottom: 20px
+              .normal-player-bottom-comment
+                width: 100%
+                height: 700px
+                position: relative
+                overflow: hidden
+                .normal-player-bottom-comment-scroll
+                  width: 100%
+                  .normal-player-bottom-comment-hot
+                    width: 100%
+                    height: 16px
+                    line-height: 16px
+                    font-size: 14px
+                    padding-bottom: 10px
+                    border-bottom: 1px solid #919191
+                    &.normal-player-bottom-comment-new
+                      margin-top: 20px
             .normal-player-bottom-simi-wrapper
               position: absolute
               width: 25%
@@ -221,7 +247,7 @@
           height: 50px
           width: 50px
           line-height: 48px
-          font-size: 35px
+          font-size: 30px
           text-align: center
           z-index: 2
           background: rgba(90,90,90,0)
@@ -310,7 +336,20 @@
         height: 50px
         .mini-player-funcs-item
           flex: 1
+          display: inline-block
           height: 50px
           line-height: 50px
           font-size: 23px
           text-align: center
+          .mini-player-funcs-list-count
+            display: inline-block
+            vertical-align: bottom
+            margin: 17px 0
+            width: 25px
+            height: 16px
+            border-radius: 8px
+            line-height: 15px
+            font-size: 12px
+            text-align: center
+            background: #919191
+            color: #f7f7f7
