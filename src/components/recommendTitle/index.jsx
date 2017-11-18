@@ -18,7 +18,7 @@ class RecommendTitle extends React.Component {
         return (
             <div className="recommend-title-wrapper">
               <div className="recommend-title-wrapper-left">
-                <i className={iconClass ? iconClass : ''}></i>
+                <i className={iconClass ? 'recommend-title-wrapper-left-icon ' + iconClass : ''}></i>
                 <span className="recommend-title-wrapper-left-text">{title}</span>
               </div>
               <div className="recommend-title-wrapper-right" style={{display: ifShowMore}}>

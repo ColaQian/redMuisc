@@ -139,7 +139,7 @@ class ExploreMusic extends React.Component {
           </div>
           <PersonRecommend/>
           <div className="recommend-song-list">
-            <RecommendTitle title="推荐歌单"/>
+            <RecommendTitle title="推荐歌单" iconClass="icon-song-list"/>
             <div className="recommend-song-list-content">
               {
                 this.state.initDone
@@ -155,7 +155,7 @@ class ExploreMusic extends React.Component {
             </div>
           </div>
           <div className="latest-music">
-              <RecommendTitle title="最新音乐"/>
+              <RecommendTitle title="最新音乐" iconClass="icon-latest-new"/>
               <div className="latest-music-content">
                 {
                   this.state.initDone

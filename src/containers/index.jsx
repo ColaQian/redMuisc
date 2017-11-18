@@ -29,7 +29,8 @@ class App extends React.Component {
             songCurrentTime: '0:00',
             currentSongPercent: 0,
             ifFullScreen: false,
-            simiSongs: []
+            simiSongs: [],
+            currentSongId: 0
         }
     }
     componentWillMount() {
@@ -45,12 +46,15 @@ class App extends React.Component {
     }
     componentDidUpdate() {
       if(this.props.player.playingState) {
-        if(!this.loadingLyric && this.props.player.currentSong !== null) {
+        if(!this.loadingLyric && this.props.player.currentSong !== null || this.state.currentSongId !== this.props.player.currentSong.id) {
           this.loadingLyric = true
           if(this.lyric) {
             this.lyric.stop()
             this.lyric = null
           }
+          this.setState({
+            currentSongId: this.props.player.currentSong.id
+          })
           //获取歌曲歌词
           getSongLyric(this.props.player.currentSong.id).then((res) =>{
             if(res.code === 200 && res.lrc.lyric) {
@@ -58,7 +62,7 @@ class App extends React.Component {
                   console.log('歌词将要滚动' + lineNum)
                   this.currentLyricLine = lineNum
                   if(lineNum > 5) {
-                    console.log("准备盾冬歌词" + this.lyricWrapper.children)
+                    console.log("准备滚动歌词" + this.lyricWrapper.children)
                     let lineEl = this.lyricWrapper.children[lineNum-5]
                     this.LyricSlider.scrollToElement(lineEl,1000)
                   }else{
@@ -184,6 +188,9 @@ class App extends React.Component {
       if(this.props.player.playingState === false) {
         this.props.setPlayingState(true)
       }
+      this.setState({
+        currentSongId: this.props.player.currentSong.id
+      })
     }
     //切换歌曲的播放状态(暂停/播放)
     togglePlayingState() {
@@ -197,21 +204,25 @@ class App extends React.Component {
     }
     //切换到下一曲
     toNextSong() {
-        this.loadingLyric = false
-        this.currentLyricLine = 0
-        if(this.props.player.currentIndex === this.props.player.playList.length - 1) {
-            this.props.setCurrentIndex(0)
-            this.props.setCurrentSong()
-            if(this.props.player.playingState === false) {
-                this.props.setPlayingState(true)
-            }
-            return 
-        }
-        this.props.setCurrentIndex(this.props.player.currentIndex + 1)
+      this.loadingLyric = false
+      this.currentLyricLine = 0
+      if(this.props.player.currentIndex === this.props.player.playList.length - 1) {
+        this.props.setCurrentIndex(0)
         this.props.setCurrentSong()
         if(this.props.player.playingState === false) {
-            this.props.setPlayingState(true)
+          this.props.setPlayingState(true)
         }
+        return 
+      }
+      this.props.setCurrentIndex(this.props.player.currentIndex + 1)
+      this.props.setCurrentSong()
+      if(this.props.player.playingState === false) {
+        this.props.setPlayingState(true)
+      }
+      
+      this.setState({
+        currentSongId: this.props.player.currentSong.id
+      })
     }
     playing(playingState) {
         if(playingStateId) {
@@ -229,60 +240,60 @@ class App extends React.Component {
     }
     //将歌曲的时间由秒转化为mm:ss格式
     handlePlayTime(time) {
-        let intTime = parseInt(time)
-        let min = intTime / 60 | 0
-        let sec = this._handleSecond(intTime % 60)
-        return `${min}:${sec}`
+      let intTime = parseInt(time)
+      let min = intTime / 60 | 0
+      let sec = this._handleSecond(intTime % 60)
+      return `${min}:${sec}`
     }
     //处理歌曲的秒数函数
     _handleSecond(sec) {
-        let initSec = sec.toString()
-        if(initSec.length < 2) {
-            return '0' + initSec
-        }
-        return sec
+      let initSec = sec.toString()
+      if(initSec.length < 2) {
+        return '0' + initSec
+      }
+      return sec
     }
     //歌曲当前的播放时间进度更新
     handleSongTimeUpdate(e) {
-        let currentTime = this.handlePlayTime(e.target.currentTime)
-        this.setState({
-            songCurrentTime: currentTime
-        })
-        this.setState({
-            currentSongPercent: parseInt(e.target.currentTime)/this.props.player.currentSong.duration
-        })
+      let currentTime = this.handlePlayTime(e.target.currentTime)
+      this.setState({
+        songCurrentTime: currentTime
+      })
+      this.setState({
+        currentSongPercent: parseInt(e.target.currentTime)/this.props.player.currentSong.duration
+      })
     }
     //切换歌曲播放模式(单曲循环/列表循环)
     togglePlayingMode() {
-        if(this.props.player.playingMode === playingMode.loopList) {
-            this.props.setPlayingMode(playingMode.loop)
-        }else {
-            this.props.setPlayingMode(playingMode.loopList)
-        }
+      if(this.props.player.playingMode === playingMode.loopList) {
+        this.props.setPlayingMode(playingMode.loop)
+      }else {
+        this.props.setPlayingMode(playingMode.loopList)
+      }
     }
     //监听歌曲播放结束的操作
     handleSongEnded() {
-        if(this.props.player.playingMode === playingMode.loop) {
-            this.audio.currentTime = 0
-            this.audio.play()
-            if(this.lyric !== null) {
-                this.lyric.seek(0)
-            }
-        }else {
-            this.toNextSong()
+      if(this.props.player.playingMode === playingMode.loop) {
+        this.audio.currentTime = 0
+        this.audio.play()
+        if(this.lyric !== null) {
+          this.lyric.seek(0)
         }
+      }else {
+        this.toNextSong()
+      }
     }
     //点击歌曲的进度条，更新歌曲的播放的时间
     updateCurrentSongProgress(percent) {
-        let currentTime = this.props.player.currentSong.duration * percent
-        console.log()
-        this.audio.currentTime = currentTime
-        if(!this.props.player.playingState) {
-            this.props.setPlayingState(!this.props.player.playingState)
-        }
-        if(this.lyric !== null) {
-            this.lyric.seek(currentTime * 1000)
-        }
+      let currentTime = this.props.player.currentSong.duration * percent
+      console.log()
+      this.audio.currentTime = currentTime
+      if(!this.props.player.playingState) {
+        this.props.setPlayingState(!this.props.player.playingState)
+      }
+      if(this.lyric !== null) {
+        this.lyric.seek(currentTime * 1000)
+      }
     }
     //点击切换是否显示主播放器
     toggleFullScreenPlayer() {

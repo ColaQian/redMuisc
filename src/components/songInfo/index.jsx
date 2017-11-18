@@ -1,5 +1,9 @@
 import React from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
+import {bindActionCreators} from "redux"
+import {connect} from "react-redux"
+import * as playerActions from '../../store/actions/player.js'
+import {mapState} from '../../store/reducers/mapState.js'
 
 import './style.styl'
 
@@ -28,7 +32,7 @@ class SongInfo extends React.Component {
     songInfoDoubleClick() {
       this.props.playSong()
     }
-     handlePlayTime(time) {
+    handlePlayTime(time) {
       let intTime = parseInt(time)
       let min = intTime / 60 | 0
       let sec = this._handleSecond(intTime % 60)
@@ -52,7 +56,13 @@ class SongInfo extends React.Component {
                 onClick={this.songInfoClick.bind(this)}
                 onDoubleClick={this.songInfoDoubleClick.bind(this)}
                 ref={(songInformation) =>{this.songInformation=songInformation}}>
-              <span className="song-information-item song-information-index">{this.handleIndex(num)}</span>
+              {
+                this.props.player.currentSong !== null && this.props.player.currentSong.id === song.id
+                ?
+                <span className="song-information-item song-information-index icon-on-playing"></span>
+                :
+                <span className="song-information-item song-information-index">{this.handleIndex(num)}</span>
+              }
               <span className="song-information-item song-information-iflove icon-fond"></span>
               <span className="song-information-item song-information-name">{song.name}</span>
               <span className="song-information-item song-information-singer">{song.singer.name}</span>
@@ -63,5 +73,7 @@ class SongInfo extends React.Component {
         )
     }
 }
-
-export default SongInfo
+function bindAction() {
+  return {}
+}
+export default connect(mapState,bindAction)(SongInfo)

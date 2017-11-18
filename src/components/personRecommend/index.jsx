@@ -25,7 +25,7 @@ class PersonRecommend extends React.Component {
         return (
             <div className="my-recommend">
               <div className="recommend-wrapper" onClick={this.toFM.bind(this)}>
-                <div className="recommend personal-fm"></div>
+                <div className="recommend personal-fm icon-fm"></div>
                   <div className="recommend-text">
                     <p className="recommend-title">私人FM</p>
                     <span className="recommend-desc">接受你的音乐专属推荐</span>
@@ -33,7 +33,7 @@ class PersonRecommend extends React.Component {
               </div>
               <div className="recommend-wrapper recommend-wrapper-daily" onClick={this.toDailyRecom.bind(this)}>
                 <div className="recommend daily-recommend">
-                  <span>{this.getDay()}</span>
+                  <span className="recommend-wrapper-daily-date">{this.getDay()}</span>
                 </div>
                 <div className="recommend-text">
                   <p className="recommend-title">每日歌曲推荐</p>
@@ -41,7 +41,7 @@ class PersonRecommend extends React.Component {
                 </div>
               </div>
               <div className="recommend-wrapper" onClick={this.toRank.bind(this)}>
-                <div className="recommend recommend-rank"></div>
+                <div className="recommend recommend-rank icon-rank"></div>
                 <div className="recommend-text">
                   <p className="recommend-title">排行榜</p>
                   <span className="recommend-desc">最热音乐榜</span>

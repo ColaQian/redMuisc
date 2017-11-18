@@ -7,45 +7,117 @@ import PlayList from './playList/index.jsx'
 import Album from './album/index.jsx'
 import SongInformation from './songInfo/index.jsx'
 import SingerSelf from './singerSelf/index.jsx'
+import {handleSingerName} from '../../common/js/createSongForExploreNewSong.js'
 import {initScroll} from '../../common/js/initBetterScroll.js'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {mapState} from '../../store/reducers/mapState.js'
-import * as searchHistoryActions from '../../store/actions/saveSearchHistory.js'
+import * as searchHistoryActions from '../../store/actions/playerAndSaveSearchHistory.js'
 import {getKeySong,search,multiSearch} from '../../api/search.js'
+import {getSongUrl} from '../../api/getSongDetail.js'
+import {getAlbumInfo} from '../../api/getAlbumInfo.js'
 import {debunce} from '../../common/js/util.js'
 
 import './style.styl'
 import './icon.styl'
 
 class Search extends React.Component {
-    constructor(props, context) {
-        super(props, context)
-        this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-        this.state = {
-          hotKey: [],
-          searchContent: '',
-          initDone: false,
-          singerSongs: [],
-          songsCount: 0,
-          singerAlbums: [],
-          albumCount: 0,
-          singerSelf: [],
-          singerCount: 0,
-          playList: [],
-          playListCount: 0,
-          currentResult: 'song'
-        }
+  constructor(props, context) {
+    super(props, context)
+    this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
+    this.state = {
+      hotKey: [],
+      searchContent: '',
+      initDone: false,
+      singerSongs: [],
+      songsCount: 0,
+      singerAlbums: [],
+      albumCount: 0,
+      singerSelf: [],
+      singerCount: 0,
+      playList: [],
+      playListCount: 0,
+      currentResult: 'song'
     }
+  }
     componentWillMount() {
       this.singerSongsOffset = 0
       this.singerAlbums = 0
       this.singerSelf = 0
       this.singerPlaylist = 0
+      this.cates = {
+        'song': 1,
+        'album': 10,
+        'singer': 100,
+        'playList': 1000,
+        '用户': 1002,
+        'MV': 1004,
+        '歌词': 1006,
+        '电台': 1009
+      }
+      this.songOffset = 0
+      this.albumOffset = 0
+      this.singerOffset = 0
+      this.playListOffset = 0
     }
     componentDidMount() {
       this._initHotSongs()
       this.searchResultSlider = initScroll(this.searchResult)
+      this.searchResultSlider.on('scroll' , debunce(() =>{
+        let searchResult = this.searchResult.getBoundingClientRect().bottom
+        let searchResultScroll = this.searchResultScroll.getBoundingClientRect().bottom
+        if(searchResult - searchResultScroll > 20) {
+          switch(this.state.currentResult) {
+            case 'song':
+              if(this.state.singerSongs.length === this.state.songsCount) {
+                break
+              }
+              this._search(this.state.searchContent,20,this.songOffset+20,1)
+              break
+
+            case 'album':
+              if(this.state.singerAlbums.length === this.state.albumCount) {
+                break
+              }
+              this._search(this.state.searchContent,20,this.albumOffset+20,10)
+              break
+
+            case 'singer':
+              if(this.state.singerSelf.length === this.state.singerCount) {
+                break
+              }
+              _search(this.state.searchContent,20,this.singerOffset+20,100)
+              break
+
+            case 'playList':
+              if(this.state.playList.length === this.state.playListCount) {
+                break
+              }
+              this._search(this.state.searchContent,20,this.playListOffset+20,1000)
+              break
+
+            default:
+              return
+          }
+          if(this.ifMoreComment) {
+            getSongComment(this.props.player.currentSong.id,10,this.commentOffset+10).then((res) =>{
+              if(res.code === 200) {
+                this.ifMoreComment = res.more
+                let com = []
+                if(res.comments.length > 0) {
+                  res.comments.map((item) =>{
+                    com.push(createComment(item))
+                    console.log('com length is ' + com.length)
+                  })
+                  this.newComments = this.newComments.concat(com)
+                  console.log('newCom的长度是 ' + this.newComments.length)
+                }
+                this.commentOffset += 10
+              }
+            })
+          }
+        }
+      },400))
     }
     componentDidUpdate() {
       if(this.searchResultSlider) {
@@ -92,15 +164,25 @@ class Search extends React.Component {
             case 1: 
               let songs = []
               let songsCount = 0
+              console.log(res)
               res.result.songs.map((item) =>{
                 songs.push({
                   id: item.id,
-                  name:item.name,
-                  singer: {id: item.artists[0].id,name: item.artists[0].name},
-                  albumId: {id: item.album.id,name: item.album.name},
+                  name: item.name,
+                  singer: {id: item.artists[0].id,name: handleSingerName(item.artists)},
+                  album: {id: item.album.id,name: item.album.name},
                   duration: item.duration / 1000
                 })
               })
+              if(this.state.singerSongs.length > 0) {
+                let ret = this.state.singerSongs.concat(songs)
+                this.setState({
+                  singerSongs: ret
+                })
+                this.songOffset += 20
+                console.log(ret.length)
+                break
+              }
               songsCount = res.result.songCount
               this.setState({
                 singerSongs: songs,
@@ -121,6 +203,15 @@ class Search extends React.Component {
                   singerName: item.artists[0].name
                 })
               })
+              if(this.state.singerAlbums.length > 0) {
+                let ret = this.state.singerAlbums.concat(albums)
+                this.setState({
+                  singerAlbums: ret
+                })
+                this.albumOffset += 20
+                console.log(ret.length)
+                break
+              }
               albumCount = res.result.albumCount
               this.setState({
                 singerAlbums: albums,
@@ -140,6 +231,15 @@ class Search extends React.Component {
                   alia: item.alias[0]
                 }) 
               })
+              if(this.state.singerSelf.length > 0) {
+                let ret = this.state.singerSelf.concat(singerSelf)
+                this.setState({
+                  singerSelf: ret
+                })
+                this.singerOffset += 20
+                console.log(ret.length)
+                break
+              }
               singerCount = res.result.artistCount
               this.setState({
                 singerSelf: singerSelf,
@@ -162,6 +262,15 @@ class Search extends React.Component {
                   picUrl: item.coverImgUrl
                 })
               })
+              if(this.state.playList.length > 0) {
+                let ret = this.state.playList.concat(playList)
+                this.setState({
+                  playList: ret
+                })
+                this.playListOffset += 20
+                console.log(ret.length)
+                break
+              }
               playListCount = res.result.playlistCount
               this.setState({
                 playList: playList,
@@ -262,6 +371,24 @@ class Search extends React.Component {
         playListCount: 0
       })
     }
+    //将搜索道德歌曲添加到redux的player
+    addSearchSongToPlayer(song) {
+      let newSong = null
+      getAlbumInfo(song.album.id).then((res) =>{
+        if(res.code === 200) {
+          newSong = {...song,album: {id: song.album.id, name: song.album.name, picUrl: res.songs[0].al.picUrl}}
+          getSongUrl(song.id).then((res) =>{
+            if(res.code === 200) {
+              newSong = {...newSong,url: res.data[0].url}
+              this.props.addSongToPlayList(newSong)
+              this.props.setCurrentIndex(this.props.player.playList.length - 1)
+              this.props.setCurrentSong()
+              this.props.setPlayingState(true)
+            }
+          })
+        }
+      })
+    }
     render() {
         return (
             <div className="search-wrapper">
@@ -334,7 +461,7 @@ class Search extends React.Component {
                         this.state.initDone
                         ?
                         this.state.singerSongs.map((item,index) =>{
-                          return <SongInformation song={item} key={index} songIndex={index}/>
+                          return <SongInformation song={item} key={index} songIndex={index} playSong={this.addSearchSongToPlayer.bind(this,item)}/>
                         })
                         : 
                         <p>loading songs...</p>
