@@ -31,17 +31,17 @@
 
 ##### 播放器界面
 
-<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116004747.png" width = "700" height = "300" alt="歌手列表" align=center />
+<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/redMusic.gif" width = "700" height = "300" alt="歌手列表" align=center />
 
 
 ##### 搜索界面
 
-<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20171116102148.png" width = "600" height = "300" alt="歌手列表" align=center />
+<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/redMusic03.gif" width = "600" height = "300" alt="歌手列表" align=center />
 
 
-##### 歌单列表
+##### 发现页面,排行榜页面,歌单列表
 
-<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/%E6%AD%8C%E5%8D%95%E5%88%97%E8%A1%A8.png" width = "600" height = "300" alt="歌手列表" align=center />
+<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/redMusic02.gif" width = "600" height = "300" alt="歌手列表" align=center />
 
 
 ##### 歌手列表
