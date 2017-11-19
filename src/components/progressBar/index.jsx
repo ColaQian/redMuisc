@@ -16,7 +16,7 @@ class ProgressBar extends React.Component {
       this._updateSongPlayingTime(this.props.currentSongPercent)
     }
     _updateSongPlayingTime(percent) {
-      if(percent > 0 && !this.touch.initialState) {
+      if(percent >= 0 && !this.touch.initialState) {
         const barWidth = this.refs.progressBar.clientWidth - this.BAR_BTN
         const offsetWidth = percent * barWidth
         this._offsetWidth(offsetWidth)

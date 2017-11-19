@@ -30,7 +30,7 @@ class SongInfoForPlayer extends React.Component {
       },1200)
     }
     songInfoDoubleClick() {
-      this.props.playSong()
+      this.props.playListSong()
     }
     handlePlayTime(time) {
       let intTime = parseInt(time)
@@ -52,7 +52,7 @@ class SongInfoForPlayer extends React.Component {
       let back = num % 2 === 1 ? '' : '#f5f5f5'
       let playingColor = this.props.player.currentSong !== null && this.props.player.currentSong.id === song.id ? '#f04134' : ''
         return (
-            <div className="song-information" 
+            <div className="playlist-song-information" 
                 style={{background: back, color: playingColor}} 
                 onClick={this.songInfoClick.bind(this)}
                 onDoubleClick={this.songInfoDoubleClick.bind(this)}
@@ -60,15 +60,15 @@ class SongInfoForPlayer extends React.Component {
               {
                 this.props.player.currentSong !== null && this.props.player.currentSong.id === song.id
                 ?
-                <span className="song-information-item song-information-index icon-on-playing"></span>
+                <span className="playlist-song-information-item playlist-song-information-index icon-on-playing"></span>
                 :
-                <span className="song-information-item song-information-index"></span>
+                <span className="playlist-song-information-item playlist-song-information-index"></span>
               }
-              <span className="song-information-item song-information-name"
+              <span className="playlist-song-information-item playlist-song-information-name"
                     style={{color: playingColor}}>{song.name}</span>
-              <span className="song-information-item song-information-singer"
+              <span className="playlist-song-information-item playlist-song-information-singer"
                     style={{color: playingColor}}>{song.singer.name}</span>
-              <span className="song-information-item song-information-duration"
+              <span className="playlist-song-information-item playlist-song-information-duration"
                     style={{color: playingColor}}>{this.handlePlayTime(song.duration)}</span>
             </div>
         )

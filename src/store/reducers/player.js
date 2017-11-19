@@ -35,6 +35,11 @@ export function setPlayer(state = initState, action) {
       })
 
     case types.SET_CURRENT_SONG:
+    if (state.playList.length === 0) {
+        return Object.assign({}, state, {
+          currentSong: null
+        })
+      }
       return Object.assign({}, state, {
         currentSong: state.playList[state.currentIndex]
       })

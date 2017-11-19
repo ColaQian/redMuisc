@@ -315,7 +315,8 @@ class App extends React.Component {
       this.miniPlayerAvatar.style.animation = ''
       },1200)
       this.setState({
-        ifFullScreen: !this.state.ifFullScreen
+        ifFullScreen: !this.state.ifFullScreen,
+        ifShowPlayList: false
       })
     }
     //点击主播放器上的专辑名称,转到相应的专辑页面
@@ -357,29 +358,83 @@ class App extends React.Component {
     }
     //点击miniPlayer的播放列表图标,切换是否显示当前播放列表
     togglePlayList() {
-      this.currentPlayListWrapper.style.animation = 'currentPlayList 1.2s alternate'
-      this.setState({
-        ifShowPlayList: !this.state.ifShowPlayList
-      })
-      if(timeId) {
-        clearTimeout(timeId)
+      if(this.state.ifShowPlayList) {
+        if(timeid) {
+          clearTimeout(timeid)
+        }
+        this.currentPlayListWrapper.style.animation = 'currentPlayListClose 1s'
+        let timeid = setTimeout(() =>{
+          this.setState({
+            ifShowPlayList: !this.state.ifShowPlayList
+          })
+          this.currentPlayListWrapper.style.animation = ''
+        },1000)
+      } else {
+        this.setState({
+          ifShowPlayList: !this.state.ifShowPlayList
+        })
+        this.currentPlayListWrapper.style.animation = 'currentPlayList 1.2s'
+        if(timeId) {
+          clearTimeout(timeId)
+        }
+        let timeId = setTimeout(() =>{
+          this.currentPlayListWrapper.style.animation = ''
+        },1400)
       }
-      let timeId = setTimeout(() =>{
-        this.currentPlayListWrapper.style.animation = ''
-      },1400)
     }
     //点击当前播放列表的关闭按钮，关闭该面板
     closeCurrentPlayList() {
-      this.setState({
-        ifShowPlayList: false
-      })
       if(timeId) {
         clearTimeout(timeId)
       }
       this.currentPlayListWrapper.style.animation = 'currentPlayListClose 1s'
       let timeId = setTimeout(() =>{
         this.currentPlayListWrapper.style.animation = ''
-      },1400)
+        this.setState({
+          ifShowPlayList: false
+      })
+      },800)
+    }
+    //双击miniplayer歌曲列表的歌曲,播放该歌曲
+    playPlayListSong(index) {
+      if(index === this.props.player.currentIndex) {
+        return 
+      }
+      this.props.setCurrentIndex(index)
+      this.props.setCurrentSong()
+      this.props.setPlayingState(true)
+    }
+    //单击miniplayer歌曲列表的垃圾桶图标，清空播放列表
+    clearPlayList() {
+      if(timeId) {
+        clearTimeout(timeId)
+      }
+      if(this.props.player.playList.length === 0) {
+        return
+      }
+      this.audio.pause()
+      this.setState({
+        songCurrentTime: '0:00',
+        currentSongPercent: 0,
+        ifFullScreen: false,
+        ifShowPlayList: false
+      })
+      this.audio.currentTime = 0
+      if(this.lyric) {
+        this.lyric.stop()
+        this.lyric = null
+        this.loadingLyric = false
+        this.currentLyricLine = 0
+      }
+      this.simiSongs = []
+      this.hotComments = []
+      this.newComments = []
+      this.props.setPlayingState(false)
+      this.props.setPlayList([])
+      this.props.setCurrentIndex(-1)
+      let timeId = setTimeout(() =>{
+        this.props.setCurrentSong()
+      },1000)
     }
     render() {
         const sideItem = this.state.sideItem
@@ -560,7 +615,8 @@ class App extends React.Component {
                            ref={(currentPlayListWrapper) =>{this.currentPlayListWrapper=currentPlayListWrapper}}>
                         <div className="current-play-list-top">
                           <span className="current-play-list-top-item current-play-list-top-title">播放列表</span>
-                          <span className="current-play-list-top-item current-play-list-top-delete-all icon-delete-all"></span>
+                          <span className="current-play-list-top-item current-play-list-top-delete-all icon-delete-all"
+                                onClick={this.clearPlayList.bind(this)}></span>
                           <span className="current-play-list-top-item current-play-list-top-close icon-delete"
                                 onClick={this.closeCurrentPlayList.bind(this)}></span>
                         </div>
@@ -571,10 +627,10 @@ class App extends React.Component {
                               this.props.player.playList.length > 0
                               ?
                               this.props.player.playList.map((item,index) =>{
-                                return <SongInfoForPlayer song={item} num={index} key={index}/>
+                                return <SongInfoForPlayer song={item} num={index} key={index} playListSong={this.playPlayListSong.bind(this,index)}/>
                               })
                               : 
-                              ''
+                              <p>暂无可播放歌曲</p>
                             }
                           </div>
                         </div>
