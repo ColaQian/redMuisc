@@ -4,6 +4,7 @@ import SideBar from '../components/sideBar/index.jsx'
 import ProgressBar from '../components/progressBar/index.jsx'
 import Comment from '../components/comment/index.jsx'
 import Lyric from 'lyric-parser'
+import SongInfoForPlayer from '../Components/songInfoForPlayerList/index.jsx'
 import {getSimiSongs} from '../api/getSongDetail.js'
 import {getSongLyric,getSongUrl,getSongComment} from '../api/getSongDetail.js'
 import {createSongForExploreNewSong} from '../common/js/createSongForExploreNewSong.js'
@@ -29,6 +30,7 @@ class App extends React.Component {
             songCurrentTime: '0:00',
             currentSongPercent: 0,
             ifFullScreen: false,
+            ifShowPlayList: false,
             simiSongs: [],
             currentSongId: 0
         }
@@ -119,16 +121,19 @@ class App extends React.Component {
         }
         this.audio.play()
       }
-      if(this.LyricSlider && this.normalPlayerSlider && this.playerComment) {
+      if(this.LyricSlider && this.normalPlayerSlider && this.playerComment &&this.currentPlayListSlider) {
         this.LyricSlider.refresh()
         this.normalPlayerSlider.refresh()
         this.playerCommentSlider.refresh()
+        this.currentPlayListSlider.refresh()
       }
+
     }
     componentDidMount() {
         this.LyricSlider = initScroll(this.lyricScroll)
         this.normalPlayerSlider = initScroll(this.normalPlayer)
         this.playerCommentSlider = initScroll(this.playerComment)
+        this.currentPlayListSlider = initScroll(this.currentPlaylist)
         this.LyricSlider.on('scroll',debunce(() =>{
           this.normalPlayerSlider.disable()
         },200))
@@ -350,6 +355,32 @@ class App extends React.Component {
     backStep() {
       window.history.back()
     }
+    //点击miniPlayer的播放列表图标,切换是否显示当前播放列表
+    togglePlayList() {
+      this.currentPlayListWrapper.style.animation = 'currentPlayList 1.2s alternate'
+      this.setState({
+        ifShowPlayList: !this.state.ifShowPlayList
+      })
+      if(timeId) {
+        clearTimeout(timeId)
+      }
+      let timeId = setTimeout(() =>{
+        this.currentPlayListWrapper.style.animation = ''
+      },1400)
+    }
+    //点击当前播放列表的关闭按钮，关闭该面板
+    closeCurrentPlayList() {
+      this.setState({
+        ifShowPlayList: false
+      })
+      if(timeId) {
+        clearTimeout(timeId)
+      }
+      this.currentPlayListWrapper.style.animation = 'currentPlayListClose 1s'
+      let timeId = setTimeout(() =>{
+        this.currentPlayListWrapper.style.animation = ''
+      },1400)
+    }
     render() {
         const sideItem = this.state.sideItem
         const myMusic = this.state.myMusic
@@ -519,9 +550,34 @@ class App extends React.Component {
                         <span className={this.props.player.playingMode === playingMode.loopList ? "mini-player-funcs-item icon-looplist" : 'mini-player-funcs-item icon-loopone'}
                               onClick={this.togglePlayingMode.bind(this)}></span>
                         <span className="mini-player-funcs-item icon-voice"></span>
-                        <span className="mini-player-funcs-item mini-player-funcs-list icon-list">
+                        <span className="mini-player-funcs-item mini-player-funcs-list icon-list"
+                              onClick={this.togglePlayList.bind(this)}>
                           <p className="mini-player-funcs-list-count">{this.props.player.playList.length}</p>
                         </span>
+                      </div>
+                      <div className="current-play-list"
+                           style={{display: this.state.ifShowPlayList ? 'block' : 'none'}}
+                           ref={(currentPlayListWrapper) =>{this.currentPlayListWrapper=currentPlayListWrapper}}>
+                        <div className="current-play-list-top">
+                          <span className="current-play-list-top-item current-play-list-top-title">播放列表</span>
+                          <span className="current-play-list-top-item current-play-list-top-delete-all icon-delete-all"></span>
+                          <span className="current-play-list-top-item current-play-list-top-close icon-delete"
+                                onClick={this.closeCurrentPlayList.bind(this)}></span>
+                        </div>
+                        <div className="current-play-list-content"
+                             ref={(currentPlaylist) =>{this.currentPlaylist=currentPlaylist}}>
+                          <div className="current-play-list-content-scroll">
+                            {
+                              this.props.player.playList.length > 0
+                              ?
+                              this.props.player.playList.map((item,index) =>{
+                                return <SongInfoForPlayer song={item} num={index} key={index}/>
+                              })
+                              : 
+                              ''
+                            }
+                          </div>
+                        </div>
                       </div>
                     </div>
                 </div>
