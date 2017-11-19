@@ -31,7 +31,7 @@
 
 ##### 播放器界面
 
-<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/redMusic.gif" width = "700" height = "300" alt="歌手列表" align=center />
+<img src="https://github.com/FCMore/redMuisc/blob/master/netMusicImages/redMusic.gif" width = "600" height = "300" alt="歌手列表" align=center />
 
 
 ##### 搜索界面
