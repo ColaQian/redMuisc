@@ -112,13 +112,9 @@ class ExploreMusic extends React.Component {
         alert("歌曲正在加载,请稍后再尝试!")
         return 
       }
-      if(this.completeNewSong.length === this.props.player.playList.length) {
-        this.props.setCurrentIndex(index)
-        this.props.setCurrentSong()
-        this.props.setPlayingState(true)
-        return
+      if(this.completeNewSong.length !== this.props.player.playList.length) {
+        this.props.setPlayList(this.completeNewSong)
       }
-      this.props.setPlayList(this.completeNewSong)
       this.props.setCurrentIndex(index)
       this.props.setCurrentSong()
       this.props.setPlayingState(true)

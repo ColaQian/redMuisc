@@ -47,63 +47,37 @@ class AlbumInfo extends React.Component {
         click: true
       })
     }
+    _handleSongUrl(song) {
+      return getSongUrl(song.id).then((res) => {
+        if (res.code === 200) {
+          return Promise.resolve(Object.assign(song, {url: res.data[0].url}))
+        }
+      })
+    }
     _initAlbumInfo() {
       const id = this.props.params.id
       getAlbumInfo(id).then((res) =>{
         if(res.code === 200) {
-          let albumInfo = null
-          let songs = []
+          let songsPromise = []
           //获取专辑的基本信息(封面，歌手，名称，介绍，发行时间等)
-          albumInfo = createAlbum(res.album)
-          this.setState({
-            albumInfo: albumInfo,
-            initDone: true
+          songsPromise = res.songs.map((item) => {
+            return this._handleSongUrl(createSong(item));
           })
-          //获取专辑内的歌曲
-          res.songs.forEach((item) =>{
-            //tip: 因为现在只需要获取到歌曲的基本信息,获取的歌曲的播放URL需要重新请求数据,而setState(albumSongs)可能在完全获取到
-            //     歌曲的播放URL就已经设置完毕，这样会导致页面上会显不出来歌曲的信息，因为此时state里的albumSongs为空
-            //     可以考虑在点击歌曲让其播放的时候再去获取播放URL
-            /*getSongUrl(item.id).then((res) =>{
-              if(res.code === 200) {
-                console.log("歌曲的URL已经取到")
-                songs.push({...createSong(item),url: res.data[0].url})
-              }
-            })*/
-            songs.push(createSong(item))
-          })
-          
-          //将获取的专辑基本信息，歌曲放在状态里
-          setTimeout(() =>{
+
+          Promise.all(songsPromise).then((data) => {
             this.setState({
-              albumSongs: songs
+              albumInfo: createAlbum(res.album),
+              initDone: true,
+              albumSongs: data
             })
-          },500)
-          songs.map((item,index) =>{
-            getSongUrl(item.id).then((res) =>{
-              if(res.code === 200) {
-                this.completeSongs[index] = {...item,url: res.data[0].url}
-              }
-            })
-          })          
+          })     
         }
       })
     }
     //将专辑的歌曲加入redux的歌曲播放列表
     addAlbumToPLayer(index) {
-      /*if(this.state.albumSongs.length === this.props.player.playList.length || this.state.albumSongs.length === 0) {
-        this.props.setCurrentIndex(index)
-        this.props.setCurrentSong()
-        this.props.setPlayingState(true)
-        return
-      }
-      this.props.setPlayList(this.completeSongs)
-      this.props.setCurrentIndex(index)
-      this.props.setCurrentSong()
-      this.props.setPlayingState(true)*/
-
       if(this.props.player.currentIndex < 0 || this.props.player.playList[0].id !== this.state.albumSongs[0].id) {
-        this.props.setPlayList(this.completeSongs)
+        this.props.setPlayList(this.state.albumSongs)
       }
       this.props.setCurrentIndex(index)
       this.props.setCurrentSong()
