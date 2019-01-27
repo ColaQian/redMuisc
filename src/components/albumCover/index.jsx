@@ -12,7 +12,7 @@ class AlbumCover extends React.Component {
       this.props.albumClick()
     }
     render() {
-      const album = this.props.album
+      let album = this.props.album
         return (
             <div className="album-cover">
               <div className="album-cover-top" onClick={this.handleCoverClick.bind(this)}>
